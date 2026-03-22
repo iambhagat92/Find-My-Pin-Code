@@ -7,701 +7,197 @@
     <meta name="description" content="Find the pin code of my location on map instantly. Search any area's postal code, zip code, or PIN code using our interactive location map tool. Fast, free & accurate.">
     <meta name="keywords" content="pin code of my location map, find pin code, area pin code, postal code finder, zip code map, location pin code, my area pin code, pin code search">
     <meta name="robots" content="index, follow">
-    <meta name="author" content="PinCodeFinder">
-    <link rel="canonical" href="https://find-my-pin-code.vercel.app/pin-code-of-my-location-map">
-
-    <!-- Open Graph -->
+    <link rel="canonical" href="https://find-my-pin-code.vercel.app/">
     <meta property="og:title" content="Pin Code of My Location Map – Find Your Area PIN Code Instantly">
     <meta property="og:description" content="Find pin code of any location on map. Fast, free & accurate postal code lookup tool.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://find-my-pin-code.vercel.app/pin-code-of-my-location-map">
-
-    <!-- Twitter Card -->
+    <meta property="og:url" content="https://find-my-pin-code.vercel.app/">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Pin Code of My Location Map – Instant PIN Code Finder">
-    <meta name="twitter:description" content="Find pin code of any location on map. Fast, free, accurate.">
-
-    <!-- Schema.org structured data -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Pin Code of My Location Map Finder",
-        "url": "https://find-my-pin-code.vercel.app/pin-code-of-my-location-map",
-        "description": "Find the pin code of your location on an interactive map. Accurate postal code, zip code, and area code finder.",
-        "applicationCategory": "UtilityApplication",
-        "operatingSystem": "All",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
-        }
-    }
+    {"@context":"https://schema.org","@type":"WebApplication","name":"Pin Code of My Location Map Finder","url":"https://find-my-pin-code.vercel.app/","description":"Find the pin code of your location on an interactive map.","applicationCategory":"UtilityApplication","operatingSystem":"All","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
     </script>
-
-    <!-- FAQ Schema -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-            {
-                "@type": "Question",
-                "name": "How do I find the pin code of my current location on a map?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Use our interactive Pin Code Map Finder tool. Simply allow location access or type your address, and the tool will instantly display the postal PIN code of your location on the map."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Is this pin code finder tool free to use?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Yes, our pin code of my location map tool is 100% free. No signup, no downloads – just instant results."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Can I find pin codes for any location worldwide?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Our tool supports postal codes and pin codes for locations across India, the USA, UK, Canada, Australia, and 200+ countries worldwide."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "What is a PIN code?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "PIN code stands for Postal Index Number. It is a 6-digit code used by India Post to identify specific post offices and delivery areas. Similar to ZIP codes in the USA."
-                }
-            }
-        ]
-    }
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I find the pin code of my current location on a map?","acceptedAnswer":{"@type":"Answer","text":"Use our interactive Pin Code Map Finder tool. Simply allow location access or type your address, and the tool will instantly display the postal PIN code of your location on the map."}},{"@type":"Question","name":"Is this pin code finder tool free to use?","acceptedAnswer":{"@type":"Answer","text":"Yes, our pin code of my location map tool is 100% free. No signup, no downloads – just instant results."}},{"@type":"Question","name":"Can I find pin codes for any location worldwide?","acceptedAnswer":{"@type":"Answer","text":"Our tool supports postal codes and pin codes for locations across India, the USA, UK, Canada, Australia, and 200+ countries worldwide."}},{"@type":"Question","name":"What is a PIN code?","acceptedAnswer":{"@type":"Answer","text":"PIN code stands for Postal Index Number. It is a 6-digit code used by India Post to identify specific post offices and delivery areas. Similar to ZIP codes in the USA."}}]}
     </script>
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        /* ========== CSS RESET & VARIABLES ========== */
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        :root{--primary:#2563eb;--primary-light:#60a5fa;--accent:#06d6a0;--bg-dark:#0f172a;--bg-card:rgba(30,41,59,0.85);--text-primary:#f1f5f9;--text-secondary:#94a3b8;--text-muted:#64748b;--gradient-primary:linear-gradient(135deg,#2563eb 0%,#7c3aed 50%,#06d6a0 100%);--gradient-cta:linear-gradient(135deg,#f59e0b 0%,#ef4444 50%,#ec4899 100%);--radius:16px;--font:'Segoe UI',system-ui,-apple-system,sans-serif}
+        html{scroll-behavior:smooth}
+        body{font-family:var(--font);background:var(--bg-dark);color:var(--text-primary);line-height:1.7;overflow-x:hidden}
+        .bg-orbs{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;overflow:hidden}
+        .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.12;animation:float 20s ease-in-out infinite}
+        .orb:nth-child(1){width:500px;height:500px;background:var(--primary);top:-10%;left:-10%}
+        .orb:nth-child(2){width:400px;height:400px;background:#7c3aed;top:50%;right:-10%;animation-delay:-7s}
+        .orb:nth-child(3){width:350px;height:350px;background:var(--accent);bottom:-5%;left:30%;animation-delay:-14s}
+        @keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-40px) scale(1.05)}66%{transform:translate(-20px,20px) scale(.95)}}
+        .container{max-width:1140px;margin:0 auto;padding:0 24px}
+        .section{padding:80px 0;position:relative;z-index:1}
+        .text-center{text-align:center}
+        .text-gradient{background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .badge{display:inline-block;padding:6px 18px;border-radius:50px;font-size:.8rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;background:rgba(37,99,235,.15);color:var(--primary-light);border:1px solid rgba(37,99,235,.3);margin-bottom:16px}
+        h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.2}
+        h2{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;line-height:1.3}
+        h3{font-size:1.2rem;font-weight:600}
 
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --primary-light: #60a5fa;
-            --accent: #06d6a0;
-            --accent-dark: #05b588;
-            --bg-dark: #0f172a;
-            --bg-card: #1e293b;
-            --bg-card-light: rgba(30, 41, 59, 0.7);
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            --gradient-primary: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #06d6a0 100%);
-            --gradient-accent: linear-gradient(135deg, #06d6a0 0%, #2563eb 100%);
-            --gradient-cta: linear-gradient(135deg, #f59e0b 0%, #ef4444 50%, #ec4899 100%);
-            --shadow-glow: 0 0 30px rgba(37, 99, 235, 0.3);
-            --shadow-card: 0 8px 32px rgba(0,0,0,0.3);
-            --radius: 16px;
-            --radius-sm: 10px;
-            --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
+        /* NAVBAR */
+        .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 0;transition:all .3s}
+        .navbar.scrolled{background:rgba(15,23,42,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.05);padding:10px 0}
+        .navbar .container{display:flex;align-items:center;justify-content:space-between}
+        .logo{font-size:1.4rem;font-weight:800;text-decoration:none;color:var(--text-primary)}
+        .logo span{color:var(--accent)}
+        .nav-links{display:flex;gap:28px;list-style:none;align-items:center}
+        .nav-links a{color:var(--text-secondary);text-decoration:none;font-size:.9rem;font-weight:500;transition:color .3s}
+        .nav-links a:hover{color:var(--text-primary)}
+        .mobile-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px}
+        .mobile-toggle span{display:block;width:24px;height:2px;background:var(--text-primary);margin:6px 0;border-radius:2px}
 
-        html { scroll-behavior: smooth; }
+        /* HERO */
+        .hero{min-height:100vh;display:flex;align-items:center;padding-top:80px;position:relative;z-index:1}
+        .hero-content{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+        .hero-text p{font-size:1.1rem;color:var(--text-secondary);margin:16px 0 28px;max-width:500px}
+        .hero-image{position:relative}
+        .hero-image img{width:100%;border-radius:var(--radius);box-shadow:0 0 30px rgba(37,99,235,.3)}
+        .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:50px;font-size:1rem;font-weight:700;text-decoration:none;cursor:pointer;border:none;transition:all .3s;font-family:var(--font)}
+        .btn-primary{background:var(--gradient-cta);color:#fff;box-shadow:0 4px 20px rgba(245,158,11,.35);position:relative}
+        .btn-primary:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(245,158,11,.5)}
+        .btn-primary::before{content:'';position:absolute;inset:-3px;border-radius:50px;background:var(--gradient-cta);opacity:0;z-index:-1;animation:pulse-ring 2.5s ease-in-out infinite}
+        @keyframes pulse-ring{0%,100%{opacity:0;transform:scale(1)}50%{opacity:.3;transform:scale(1.05)}}
+        .btn-secondary{background:rgba(255,255,255,.07);color:var(--text-primary);border:1px solid rgba(255,255,255,.15)}
+        .btn-secondary:hover{background:rgba(255,255,255,.12);transform:translateY(-2px)}
+        .cta-group{display:flex;gap:16px;flex-wrap:wrap}
+        .trust-bar{display:flex;gap:40px;margin-top:40px;flex-wrap:wrap}
+        .trust-item{display:flex;align-items:center;gap:10px}
+        .trust-icon{width:40px;height:40px;border-radius:10px;background:rgba(6,214,160,.12);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:1.2rem}
+        .trust-value{font-size:1.1rem;font-weight:700}
+        .trust-label{font-size:.85rem;color:var(--text-secondary)}
 
-        body {
-            font-family: var(--font);
-            background: var(--bg-dark);
-            color: var(--text-primary);
-            line-height: 1.7;
-            overflow-x: hidden;
-        }
+        /* MAP TOOL SECTION */
+        .map-tool-section{background:rgba(30,41,59,.4)}
+        .map-wrapper{margin-top:32px;border-radius:var(--radius);overflow:hidden;border:1px solid rgba(255,255,255,.08);box-shadow:0 12px 48px rgba(0,0,0,.4)}
+        .map-controls{display:flex;gap:12px;padding:16px 20px;background:rgba(15,23,42,.95);flex-wrap:wrap;align-items:center}
+        .search-box{flex:1;min-width:200px;display:flex;gap:8px}
+        .search-box input{flex:1;padding:12px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:var(--text-primary);font-size:.95rem;font-family:var(--font);outline:none;transition:border-color .3s}
+        .search-box input:focus{border-color:var(--primary-light)}
+        .search-box input::placeholder{color:var(--text-muted)}
+        .map-btn{padding:12px 20px;border-radius:10px;border:none;font-weight:600;cursor:pointer;font-size:.9rem;transition:all .3s;font-family:var(--font);display:flex;align-items:center;gap:6px}
+        .map-btn-search{background:var(--primary);color:#fff}
+        .map-btn-search:hover{background:var(--primary-light)}
+        .map-btn-gps{background:rgba(6,214,160,.15);color:var(--accent);border:1px solid rgba(6,214,160,.3)}
+        .map-btn-gps:hover{background:rgba(6,214,160,.25)}
+        #map{height:500px;width:100%;background:#1a2332}
+        .result-panel{padding:20px;background:rgba(15,23,42,.95);display:none}
+        .result-panel.active{display:block}
+        .result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
+        .result-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px 16px}
+        .result-item .label{font-size:.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:4px}
+        .result-item .value{font-size:1.1rem;font-weight:700;color:var(--text-primary)}
+        .result-item .value.pin-highlight{font-size:1.4rem;color:var(--accent)}
+        .loading-msg{color:var(--text-secondary);text-align:center;padding:12px;font-size:.9rem}
 
-        /* ========== ANIMATED BACKGROUND ========== */
-        .bg-orbs {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-        .bg-orbs .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.15;
-            animation: float 20s ease-in-out infinite;
-        }
-        .bg-orbs .orb:nth-child(1) {
-            width: 500px; height: 500px;
-            background: var(--primary);
-            top: -10%; left: -10%;
-            animation-delay: 0s;
-        }
-        .bg-orbs .orb:nth-child(2) {
-            width: 400px; height: 400px;
-            background: #7c3aed;
-            top: 50%; right: -10%;
-            animation-delay: -7s;
-        }
-        .bg-orbs .orb:nth-child(3) {
-            width: 350px; height: 350px;
-            background: var(--accent);
-            bottom: -5%; left: 30%;
-            animation-delay: -14s;
-        }
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -40px) scale(1.05); }
-            66% { transform: translate(-20px, 20px) scale(0.95); }
-        }
+        /* FEATURES */
+        .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:48px}
+        .feature-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:32px;backdrop-filter:blur(20px);transition:all .3s;position:relative;overflow:hidden}
+        .feature-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:var(--gradient-primary);opacity:0;transition:opacity .3s}
+        .feature-card:hover{transform:translateY(-4px);border-color:rgba(37,99,235,.3);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+        .feature-card:hover::before{opacity:1}
+        .feature-icon{width:52px;height:52px;border-radius:14px;background:rgba(37,99,235,.12);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:18px}
+        .feature-card h3{margin-bottom:10px}
+        .feature-card p{color:var(--text-secondary);font-size:.95rem}
 
-        /* ========== UTILITY ========== */
-        .container {
-            max-width: 1140px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-        .section { padding: 80px 0; position: relative; z-index: 1; }
-        .text-center { text-align: center; }
-        .text-gradient {
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .badge {
-            display: inline-block;
-            padding: 6px 18px;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            background: rgba(37, 99, 235, 0.15);
-            color: var(--primary-light);
-            border: 1px solid rgba(37, 99, 235, 0.3);
-            margin-bottom: 16px;
-        }
-        h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.2; }
-        h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700; line-height: 1.3; }
-        h3 { font-size: 1.2rem; font-weight: 600; }
+        /* HOW IT WORKS */
+        .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:32px;margin-top:48px}
+        .step{text-align:center}
+        .step-number{width:64px;height:64px;border-radius:50%;background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;margin:0 auto 20px;color:#fff;box-shadow:0 0 30px rgba(37,99,235,.3)}
+        .step p{color:var(--text-secondary);font-size:.95rem}
 
-        /* ========== NAVBAR ========== */
-        .navbar {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 1000;
-            padding: 16px 0;
-            transition: all 0.3s ease;
-        }
-        .navbar.scrolled {
-            background: rgba(15, 23, 42, 0.92);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding: 10px 0;
-        }
-        .navbar .container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .logo {
-            font-size: 1.4rem;
-            font-weight: 800;
-            text-decoration: none;
-            color: var(--text-primary);
-        }
-        .logo span { color: var(--accent); }
-        .nav-links { display: flex; gap: 28px; list-style: none; }
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        .nav-links a:hover { color: var(--text-primary); }
-        .nav-cta {
-            padding: 10px 24px;
-            background: var(--gradient-accent);
-            color: var(--bg-dark) !important;
-            border-radius: 50px;
-            font-weight: 700 !important;
-            transition: transform 0.3s, box-shadow 0.3s !important;
-        }
-        .nav-cta:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(6, 214, 160, 0.4);
-        }
-        .mobile-toggle {
-            display: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-        }
-        .mobile-toggle span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: var(--text-primary);
-            margin: 6px 0;
-            transition: all 0.3s;
-            border-radius: 2px;
-        }
+        /* SEO CONTENT */
+        .content-section{background:rgba(30,41,59,.4)}
+        .content-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+        .content-text h2{margin-bottom:20px}
+        .content-text p{color:var(--text-secondary);margin-bottom:16px}
+        .content-text ul{list-style:none;margin-top:20px}
+        .content-text ul li{padding:10px 0;color:var(--text-secondary);display:flex;align-items:flex-start;gap:12px}
+        .content-text ul li::before{content:'✓';color:var(--accent);font-weight:700;flex-shrink:0}
 
-        /* ========== HERO ========== */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding-top: 80px;
-            position: relative;
-            z-index: 1;
-        }
-        .hero-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center;
-        }
-        .hero-text p {
-            font-size: 1.15rem;
-            color: var(--text-secondary);
-            margin: 20px 0 32px;
-            max-width: 500px;
-        }
-        .hero-image {
-            position: relative;
-        }
-        .hero-image img {
-            width: 100%;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-glow);
-        }
-        .hero-image::after {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            border-radius: calc(var(--radius) + 4px);
-            background: var(--gradient-primary);
-            z-index: -1;
-            opacity: 0.3;
-            filter: blur(20px);
-        }
-        .cta-group { display: flex; gap: 16px; flex-wrap: wrap; }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 14px 32px;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 700;
-            text-decoration: none;
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s ease;
-        }
-        .btn-primary {
-            background: var(--gradient-cta);
-            color: #fff;
-            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.35);
-        }
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(245, 158, 11, 0.5);
-        }
-        .btn-secondary {
-            background: rgba(255,255,255,0.07);
-            color: var(--text-primary);
-            border: 1px solid rgba(255,255,255,0.15);
-            backdrop-filter: blur(10px);
-        }
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.12);
-            transform: translateY(-2px);
-        }
-        .btn svg { width: 18px; height: 18px; }
+        /* FAQ */
+        .faq-list{max-width:800px;margin:48px auto 0}
+        .faq-item{background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:10px;margin-bottom:12px;overflow:hidden}
+        .faq-question{width:100%;padding:20px 24px;background:none;border:none;color:var(--text-primary);font-size:1rem;font-weight:600;text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:var(--font)}
+        .faq-question:hover{color:var(--primary-light)}
+        .faq-arrow{transition:transform .3s;color:var(--text-muted)}
+        .faq-item.active .faq-arrow{transform:rotate(180deg)}
+        .faq-answer{max-height:0;overflow:hidden;transition:max-height .4s}
+        .faq-answer-inner{padding:0 24px 20px;color:var(--text-secondary);font-size:.95rem}
 
-        /* Pulse ring on CTA */
-        .btn-primary {
-            position: relative;
-            overflow: visible;
-        }
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            inset: -3px;
-            border-radius: 50px;
-            background: var(--gradient-cta);
-            opacity: 0;
-            z-index: -1;
-            animation: pulse-ring 2.5s ease-in-out infinite;
-        }
-        @keyframes pulse-ring {
-            0%, 100% { opacity: 0; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(1.05); }
-        }
+        /* CTA BOX */
+        .cta-box{background:var(--bg-card);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:60px 40px;text-align:center;position:relative;overflow:hidden}
+        .cta-box::before{content:'';position:absolute;inset:0;background:var(--gradient-primary);opacity:.04}
+        .cta-box h2{margin-bottom:16px}
+        .cta-box p{color:var(--text-secondary);max-width:600px;margin:0 auto 32px}
 
-        /* ========== TRUST BAR ========== */
-        .trust-bar {
-            display: flex;
-            gap: 40px;
-            margin-top: 48px;
-            flex-wrap: wrap;
-        }
-        .trust-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .trust-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: rgba(6, 214, 160, 0.12);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent);
-            font-size: 1.2rem;
-        }
-        .trust-item .trust-label {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        .trust-item .trust-value {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
+        /* FOOTER */
+        .footer{padding:48px 0 24px;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:1}
+        .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;margin-bottom:40px}
+        .footer-brand p{color:var(--text-secondary);font-size:.9rem;margin-top:12px}
+        .footer h4{font-size:.9rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:16px}
+        .footer ul{list-style:none}
+        .footer ul li{margin-bottom:10px}
+        .footer ul a{color:var(--text-secondary);text-decoration:none;font-size:.9rem;transition:color .3s}
+        .footer ul a:hover{color:var(--primary-light)}
+        .footer-bottom{text-align:center;padding-top:24px;border-top:1px solid rgba(255,255,255,.04);color:var(--text-muted);font-size:.85rem}
 
-        /* ========== FEATURES GRID ========== */
-        .features-header { margin-bottom: 56px; }
-        .features-header p { color: var(--text-secondary); margin-top: 12px; max-width: 600px; margin-inline: auto; }
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-        }
-        .feature-card {
-            background: var(--bg-card-light);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: var(--radius);
-            padding: 32px;
-            backdrop-filter: blur(20px);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 3px;
-            background: var(--gradient-primary);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .feature-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(37, 99, 235, 0.3);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-        }
-        .feature-card:hover::before { opacity: 1; }
-        .feature-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 14px;
-            background: rgba(37, 99, 235, 0.12);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 18px;
-        }
-        .feature-card h3 { margin-bottom: 10px; }
-        .feature-card p { color: var(--text-secondary); font-size: 0.95rem; }
+        /* SCROLL ANIMATION */
+        .fade-up{opacity:0;transform:translateY(30px);transition:opacity .6s,transform .6s}
+        .fade-up.visible{opacity:1;transform:translateY(0)}
 
-        /* ========== HOW IT WORKS ========== */
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 32px;
-            margin-top: 56px;
+        /* RESPONSIVE */
+        @media(max-width:900px){
+            .hero-content{grid-template-columns:1fr;text-align:center}
+            .hero-text p{margin-inline:auto}
+            .cta-group{justify-content:center}
+            .trust-bar{justify-content:center}
+            .hero-image{order:-1;max-width:400px;margin:0 auto}
+            .content-grid{grid-template-columns:1fr}
+            .footer-grid{grid-template-columns:1fr 1fr}
         }
-        .step {
-            text-align: center;
-            position: relative;
-        }
-        .step-number {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: var(--gradient-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin: 0 auto 20px;
-            color: #fff;
-            box-shadow: 0 0 30px rgba(37, 99, 235, 0.3);
-        }
-        .step h3 { margin-bottom: 10px; }
-        .step p { color: var(--text-secondary); font-size: 0.95rem; }
-
-        /* ========== CTA SECTION ========== */
-        .cta-section {
-            position: relative;
-            overflow: hidden;
-        }
-        .cta-box {
-            background: var(--bg-card);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 24px;
-            padding: 60px 40px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .cta-box::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: var(--gradient-primary);
-            opacity: 0.04;
-        }
-        .cta-box h2 { margin-bottom: 16px; }
-        .cta-box p {
-            color: var(--text-secondary);
-            margin-bottom: 32px;
-            max-width: 600px;
-            margin-inline: auto;
-            margin-bottom: 32px;
-        }
-        .cta-box .btn-primary {
-            font-size: 1.1rem;
-            padding: 16px 40px;
-        }
-
-        /* ========== CONTENT / SEO TEXT ========== */
-        .content-section { background: rgba(30, 41, 59, 0.4); }
-        .content-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: start;
-        }
-        .content-text h2 { margin-bottom: 20px; }
-        .content-text p { color: var(--text-secondary); margin-bottom: 16px; }
-        .content-text ul {
-            list-style: none;
-            margin-top: 20px;
-        }
-        .content-text ul li {
-            padding: 10px 0;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-        }
-        .content-text ul li::before {
-            content: '✓';
-            color: var(--accent);
-            font-weight: 700;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        /* ========== FAQ ========== */
-        .faq-list { max-width: 800px; margin: 48px auto 0; }
-        .faq-item {
-            background: var(--bg-card-light);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: var(--radius-sm);
-            margin-bottom: 12px;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-        }
-        .faq-question {
-            width: 100%;
-            padding: 20px 24px;
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            font-size: 1rem;
-            font-weight: 600;
-            text-align: left;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-family: var(--font);
-        }
-        .faq-question:hover { color: var(--primary-light); }
-        .faq-arrow {
-            font-size: 1rem;
-            transition: transform 0.3s;
-            color: var(--text-muted);
-        }
-        .faq-item.active .faq-arrow { transform: rotate(180deg); }
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
-        }
-        .faq-answer-inner {
-            padding: 0 24px 20px;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.7;
-        }
-
-        /* ========== FOOTER ========== */
-        .footer {
-            padding: 48px 0 24px;
-            border-top: 1px solid rgba(255,255,255,0.06);
-            position: relative;
-            z-index: 1;
-        }
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-        .footer-brand p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-top: 12px;
-        }
-        .footer h4 {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-        }
-        .footer ul { list-style: none; }
-        .footer ul li { margin-bottom: 10px; }
-        .footer ul a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-        .footer ul a:hover { color: var(--primary-light); }
-        .footer-bottom {
-            text-align: center;
-            padding-top: 24px;
-            border-top: 1px solid rgba(255,255,255,0.04);
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        /* ========== SECONDARY CTA BANNER ========== */
-        .sticky-cta {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            z-index: 999;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(37, 99, 235, 0.3);
-            padding: 12px 0;
-            transform: translateY(100%);
-            transition: transform 0.4s ease;
-        }
-        .sticky-cta.visible { transform: translateY(0); }
-        .sticky-cta .container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-        }
-        .sticky-cta p {
-            font-size: 0.95rem;
-            font-weight: 600;
-        }
-        .sticky-cta .btn {
-            padding: 10px 28px;
-            font-size: 0.9rem;
-            white-space: nowrap;
-        }
-
-        /* ========== ANIMATIONS ========== */
-        .fade-up {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-        .fade-up.visible { opacity: 1; transform: translateY(0); }
-
-        /* ========== RESPONSIVE ========== */
-        @media (max-width: 900px) {
-            .hero-content { grid-template-columns: 1fr; text-align: center; }
-            .hero-text p { margin-inline: auto; }
-            .cta-group { justify-content: center; }
-            .trust-bar { justify-content: center; }
-            .hero-image { order: -1; max-width: 400px; margin: 0 auto; }
-            .content-grid { grid-template-columns: 1fr; }
-            .footer-grid { grid-template-columns: 1fr 1fr; }
-        }
-        @media (max-width: 640px) {
-            .section { padding: 56px 0; }
-            .nav-links { display: none; }
-            .nav-links.active {
-                display: flex;
-                flex-direction: column;
-                position: absolute;
-                top: 100%; left: 0; right: 0;
-                background: rgba(15, 23, 42, 0.97);
-                backdrop-filter: blur(20px);
-                padding: 24px;
-                gap: 16px;
-                border-bottom: 1px solid rgba(255,255,255,0.06);
-            }
-            .mobile-toggle { display: block; }
-            .footer-grid { grid-template-columns: 1fr; gap: 24px; }
-            .features-grid { grid-template-columns: 1fr; }
-            .trust-bar { gap: 20px; }
-            .cta-box { padding: 40px 20px; }
-            .sticky-cta .container { flex-direction: column; text-align: center; }
+        @media(max-width:640px){
+            .section{padding:56px 0}
+            .nav-links{display:none}
+            .nav-links.active{display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:rgba(15,23,42,.97);backdrop-filter:blur(20px);padding:24px;gap:16px;border-bottom:1px solid rgba(255,255,255,.06)}
+            .mobile-toggle{display:block}
+            .footer-grid{grid-template-columns:1fr;gap:24px}
+            .features-grid{grid-template-columns:1fr}
+            .trust-bar{gap:20px}
+            .cta-box{padding:40px 20px}
+            #map{height:350px}
+            .map-controls{flex-direction:column}
+            .search-box{min-width:0}
+            .result-grid{grid-template-columns:1fr 1fr}
         }
     </style>
 </head>
 <body>
+    <div class="bg-orbs" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
 
-    <!-- Animated Background Orbs -->
-    <div class="bg-orbs" aria-hidden="true">
-        <div class="orb"></div>
-        <div class="orb"></div>
-        <div class="orb"></div>
-    </div>
-
-    <!-- ========== NAVBAR ========== -->
+    <!-- NAVBAR -->
     <nav class="navbar" id="navbar">
         <div class="container">
             <a href="#" class="logo">Pin<span>Code</span>Finder</a>
             <ul class="nav-links" id="navLinks">
+                <li><a href="#map-tool">Find Pin Code</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#how-it-works">How It Works</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#faq">FAQ</a></li>
-                <li><a href="https://find-my-pin-code.vercel.app/checkout" class="nav-cta" id="nav-cta-button">Find My Pin Code →</a></li>
             </ul>
-            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
-                <span></span><span></span><span></span>
-            </button>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
         </div>
     </nav>
 
-    <!-- ========== HERO ========== -->
+    <!-- HERO -->
     <section class="hero" id="hero">
         <div class="container">
             <div class="hero-content">
@@ -710,387 +206,321 @@
                     <h1>Find the <span class="text-gradient">Pin Code of My Location</span> on Map</h1>
                     <p>Instantly discover the postal PIN code, zip code, or area code for any location on the map. Accurate, free, and works for 200+ countries worldwide.</p>
                     <div class="cta-group">
-                        <a href="https://www.yoursite.com/checkout" class="btn btn-primary" id="hero-cta-primary">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <a href="#map-tool" class="btn btn-primary" id="hero-cta">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                             Find My Pin Code Now
                         </a>
                         <a href="#how-it-works" class="btn btn-secondary">See How It Works</a>
                     </div>
                     <div class="trust-bar">
-                        <div class="trust-item">
-                            <div class="trust-icon">🌍</div>
-                            <div>
-                                <div class="trust-value">200+</div>
-                                <div class="trust-label">Countries</div>
-                            </div>
-                        </div>
-                        <div class="trust-item">
-                            <div class="trust-icon">⚡</div>
-                            <div>
-                                <div class="trust-value">Instant</div>
-                                <div class="trust-label">Results</div>
-                            </div>
-                        </div>
-                        <div class="trust-item">
-                            <div class="trust-icon">🔒</div>
-                            <div>
-                                <div class="trust-value">100%</div>
-                                <div class="trust-label">Free & Secure</div>
-                            </div>
-                        </div>
+                        <div class="trust-item"><div class="trust-icon">🌍</div><div><div class="trust-value">200+</div><div class="trust-label">Countries</div></div></div>
+                        <div class="trust-item"><div class="trust-icon">⚡</div><div><div class="trust-value">Instant</div><div class="trust-label">Results</div></div></div>
+                        <div class="trust-item"><div class="trust-icon">🔒</div><div><div class="trust-value">100%</div><div class="trust-label">Free & Secure</div></div></div>
                     </div>
                 </div>
-                <div class="hero-image fade-up" style="transition-delay: 0.2s">
+                <div class="hero-image fade-up" style="transition-delay:.2s">
                     <img src="hero-map.png" alt="Pin code of my location map - Interactive map showing postal codes and location pins" width="560" height="560" loading="eager">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ========== FEATURES ========== -->
-    <section class="section" id="features">
-        <div class="container">
-            <div class="features-header text-center fade-up">
-                <span class="badge">✨ Powerful Features</span>
-                <h2>Everything You Need to <span class="text-gradient">Find Any Pin Code</span></h2>
-                <p>Our pin code of my location map tool gives you fast, accurate postal code data with zero hassle.</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card fade-up">
-                    <div class="feature-icon">📍</div>
-                    <h3>GPS Location Detection</h3>
-                    <p>Automatically detect your current location and display the exact pin code on an interactive map. No typing needed.</p>
-                </div>
-                <div class="feature-card fade-up" style="transition-delay: 0.1s">
-                    <div class="feature-icon">🗺️</div>
-                    <h3>Interactive Map Search</h3>
-                    <p>Click anywhere on the map or search by address to find the pin code of that location instantly and accurately.</p>
-                </div>
-                <div class="feature-card fade-up" style="transition-delay: 0.2s">
-                    <div class="feature-icon">🌐</div>
-                    <h3>Global Coverage</h3>
-                    <p>Supports postal codes for India (PIN), USA (ZIP), UK, Canada, Australia, and 200+ countries around the world.</p>
-                </div>
-                <div class="feature-card fade-up" style="transition-delay: 0.1s">
-                    <div class="feature-icon">📱</div>
-                    <h3>Mobile Optimized</h3>
-                    <p>Works perfectly on phones and tablets. Find pin codes on the go — no app download required.</p>
-                </div>
-                <div class="feature-card fade-up" style="transition-delay: 0.2s">
-                    <div class="feature-icon">🔄</div>
-                    <h3>Reverse Lookup</h3>
-                    <p>Enter a pin code or zip code and find the exact area, district, and state it belongs to on the map.</p>
-                </div>
-                <div class="feature-card fade-up" style="transition-delay: 0.3s">
-                    <div class="feature-icon">📊</div>
-                    <h3>Area Details</h3>
-                    <p>Get detailed info including post office name, district, state, delivery status, and nearby pin codes.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== HOW IT WORKS ========== -->
-    <section class="section content-section" id="how-it-works">
+    <!-- MAP TOOL -->
+    <section class="section map-tool-section" id="map-tool">
         <div class="container">
             <div class="text-center fade-up">
-                <span class="badge">🚀 Simple & Fast</span>
-                <h2>How to Find <span class="text-gradient">Pin Code of Your Location</span> on Map</h2>
+                <span class="badge">🗺️ Interactive Tool</span>
+                <h2>Find <span class="text-gradient">Pin Code of Your Location</span> on Map</h2>
+                <p style="color:var(--text-secondary);margin-top:12px">Click anywhere on the map, search by address, or use GPS to find your pin code instantly.</p>
             </div>
-            <div class="steps">
-                <div class="step fade-up">
-                    <div class="step-number">1</div>
-                    <h3>Open the Map Tool</h3>
-                    <p>Click the "Find My Pin Code" button to open our interactive pin code map finder tool.</p>
+            <div class="map-wrapper fade-up" style="transition-delay:.15s">
+                <div class="map-controls">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Search address, city, or landmark..." aria-label="Search location">
+                        <button class="map-btn map-btn-search" id="searchBtn" onclick="searchLocation()">🔍 Search</button>
+                    </div>
+                    <button class="map-btn map-btn-gps" id="gpsBtn" onclick="useMyLocation()">📍 My Location</button>
                 </div>
-                <div class="step fade-up" style="transition-delay: 0.1s">
-                    <div class="step-number">2</div>
-                    <h3>Allow Location Access</h3>
-                    <p>Allow GPS access or manually type your address, city, or landmark to pinpoint your location.</p>
+                <div id="map"></div>
+                <div class="result-panel" id="resultPanel">
+                    <div class="result-grid" id="resultGrid"></div>
                 </div>
-                <div class="step fade-up" style="transition-delay: 0.2s">
-                    <div class="step-number">3</div>
-                    <h3>Get Your Pin Code</h3>
-                    <p>Instantly see your area's pin code, post office info, district, and state displayed on the map.</p>
-                </div>
-            </div>
-            <div class="text-center fade-up" style="margin-top: 48px;">
-                <a href="https://www.yoursite.com/checkout" class="btn btn-primary" id="steps-cta-button">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    Find My Pin Code on Map →
-                </a>
+                <div class="loading-msg" id="loadingMsg" style="display:none">⏳ Looking up pin code...</div>
             </div>
         </div>
     </section>
 
-    <!-- ========== MID-PAGE CTA ========== -->
-    <section class="section cta-section" id="cta-mid">
+    <!-- FEATURES -->
+    <section class="section" id="features">
         <div class="container">
-            <div class="cta-box fade-up">
-                <span class="badge">🎯 Try It Free</span>
-                <h2>Ready to Find the <span class="text-gradient">Pin Code of Your Location</span>?</h2>
-                <p>Join millions of users who trust our tool to find accurate postal codes, ZIP codes, and area pin codes using our interactive map.</p>
-                <a href="https://www.yoursite.com/checkout" class="btn btn-primary" id="mid-cta-button">
-                    Find Pin Code of My Location →
-                </a>
+            <div class="text-center fade-up">
+                <span class="badge">✨ Powerful Features</span>
+                <h2>Everything You Need to <span class="text-gradient">Find Any Pin Code</span></h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card fade-up"><div class="feature-icon">📍</div><h3>GPS Location Detection</h3><p>Automatically detect your current location and display the exact pin code on an interactive map.</p></div>
+                <div class="feature-card fade-up"><div class="feature-icon">🗺️</div><h3>Interactive Map Search</h3><p>Click anywhere on the map or search by address to find the pin code of that location instantly.</p></div>
+                <div class="feature-card fade-up"><div class="feature-icon">🌐</div><h3>Global Coverage</h3><p>Supports postal codes for India (PIN), USA (ZIP), UK, Canada, Australia, and 200+ countries.</p></div>
+                <div class="feature-card fade-up"><div class="feature-icon">📱</div><h3>Mobile Optimized</h3><p>Works perfectly on phones and tablets. No app download required.</p></div>
+                <div class="feature-card fade-up"><div class="feature-icon">🔄</div><h3>Click-to-Find</h3><p>Simply click any point on the map to instantly reveal its pin code and area details.</p></div>
+                <div class="feature-card fade-up"><div class="feature-icon">📊</div><h3>Area Details</h3><p>Get detailed info including post office name, district, state, and country of any pin code.</p></div>
             </div>
         </div>
     </section>
 
-    <!-- ========== SEO CONTENT ========== -->
+    <!-- HOW IT WORKS -->
+    <section class="section content-section" id="how-it-works">
+        <div class="container">
+            <div class="text-center fade-up"><span class="badge">🚀 Simple & Fast</span><h2>How to Find <span class="text-gradient">Pin Code of Your Location</span> on Map</h2></div>
+            <div class="steps">
+                <div class="step fade-up"><div class="step-number">1</div><h3>Open the Map Tool</h3><p>Scroll up to our interactive map or click "Find My Pin Code Now" to jump to the tool.</p></div>
+                <div class="step fade-up"><div class="step-number">2</div><h3>Allow Location or Search</h3><p>Click "My Location" for GPS, search by address, or click directly on the map.</p></div>
+                <div class="step fade-up"><div class="step-number">3</div><h3>Get Your Pin Code</h3><p>Instantly see your area's pin code, city, state, and country displayed below the map.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEO CONTENT -->
     <section class="section content-section" id="about">
         <div class="container">
             <div class="content-grid">
                 <div class="content-text fade-up">
                     <span class="badge">📖 Learn More</span>
                     <h2>What is a <span class="text-gradient">Pin Code</span> and Why Does It Matter?</h2>
-                    <p>A <strong>PIN code</strong> (Postal Index Number) is a unique 6-digit code used by India Post to identify specific post offices and delivery zones across India. Similarly, <strong>ZIP codes</strong> serve the same purpose in the USA, <strong>postcodes</strong> in the UK, and <strong>postal codes</strong> in Canada and other countries.</p>
+                    <p>A <strong>PIN code</strong> (Postal Index Number) is a unique 6-digit code used by India Post to identify specific post offices and delivery zones. Similarly, <strong>ZIP codes</strong> in the USA, <strong>postcodes</strong> in the UK, and <strong>postal codes</strong> in Canada.</p>
                     <p>Finding the <strong>pin code of your location on a map</strong> is essential for:</p>
                     <ul>
                         <li>Sending and receiving mail or courier packages accurately</li>
                         <li>Filling out e-commerce delivery addresses correctly</li>
                         <li>Government form submissions and official documentation</li>
                         <li>Bank account opening and KYC verification</li>
-                        <li>Finding nearby post offices and delivery centers</li>
                         <li>Online shopping, insurance applications, and tax filings</li>
                     </ul>
                 </div>
-                <div class="content-text fade-up" style="transition-delay: 0.15s">
+                <div class="content-text fade-up" style="transition-delay:.15s">
                     <span class="badge">💡 Pro Tips</span>
-                    <h2>How to Use the <span class="text-gradient">Pin Code Map Finder</span> Effectively</h2>
-                    <p>Our <strong>pin code of my location map</strong> tool is designed to be the fastest way to look up any postal code. Here are some tips to get the best results:</p>
+                    <h2>How to Use the <span class="text-gradient">Pin Code Map Finder</span></h2>
                     <ul>
-                        <li><strong>Use GPS:</strong> Allow location access for the most accurate pin code of your current position</li>
-                        <li><strong>Search by landmark:</strong> Type a nearby landmark if you don't know the exact address</li>
-                        <li><strong>Explore nearby:</strong> Click on surrounding areas to discover adjacent pin codes</li>
-                        <li><strong>Reverse search:</strong> Enter a pin code number to find its location on the map</li>
-                        <li><strong>Save favorites:</strong> Bookmark frequently used pin code locations for quick access</li>
-                        <li><strong>Share results:</strong> Easily share pin code details with friends and family</li>
+                        <li><strong>Use GPS:</strong> Allow location access for the most accurate pin code</li>
+                        <li><strong>Search by landmark:</strong> Type a nearby landmark if you don't know the address</li>
+                        <li><strong>Click on map:</strong> Click directly on the map to get any location's pin code</li>
+                        <li><strong>Zoom in:</strong> Zoom into specific areas for more precise results</li>
+                        <li><strong>Share results:</strong> Copy pin code details to share with others</li>
                     </ul>
-                    <div style="margin-top: 28px;">
-                        <a href="https://www.yoursite.com/checkout" class="btn btn-primary" id="content-cta-button">
-                            Try the Pin Code Finder →
-                        </a>
-                    </div>
+                    <div style="margin-top:28px"><a href="#map-tool" class="btn btn-primary">Try the Pin Code Finder ↑</a></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ========== FAQ ========== -->
+    <!-- FAQ -->
     <section class="section" id="faq">
         <div class="container">
-            <div class="text-center fade-up">
-                <span class="badge">❓ FAQs</span>
-                <h2>Frequently Asked Questions About <span class="text-gradient">Pin Code of My Location Map</span></h2>
-            </div>
+            <div class="text-center fade-up"><span class="badge">❓ FAQs</span><h2>Frequently Asked Questions About <span class="text-gradient">Pin Code of My Location Map</span></h2></div>
             <div class="faq-list">
-                <div class="faq-item fade-up">
-                    <button class="faq-question" id="faq-btn-1">
-                        <span>How do I find the pin code of my current location on a map?</span>
-                        <span class="faq-arrow">▼</span>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Use our interactive <strong>Pin Code Map Finder</strong> tool. Simply click "Find My Pin Code Now", allow location access on your browser, and the tool will instantly detect your GPS position and display the postal PIN code of your current location on the map. You can also type in any address manually.
-                        </div>
-                    </div>
-                </div>
-                <div class="faq-item fade-up">
-                    <button class="faq-question" id="faq-btn-2">
-                        <span>Is this pin code finder tool free to use?</span>
-                        <span class="faq-arrow">▼</span>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Yes! Our <strong>pin code of my location map</strong> tool is 100% free to use. There's no signup required, no downloads, and no hidden charges. Just visit the tool and get instant results for pin codes, ZIP codes, and postal codes worldwide.
-                        </div>
-                    </div>
-                </div>
-                <div class="faq-item fade-up">
-                    <button class="faq-question" id="faq-btn-3">
-                        <span>Can I find pin codes for any location worldwide?</span>
-                        <span class="faq-arrow">▼</span>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Absolutely! Our tool supports postal codes and pin codes for locations across <strong>India, USA, UK, Canada, Australia</strong>, and <strong>200+ countries</strong> worldwide. Whether you need an Indian PIN code, American ZIP code, or British postcode, we've got you covered.
-                        </div>
-                    </div>
-                </div>
-                <div class="faq-item fade-up">
-                    <button class="faq-question" id="faq-btn-4">
-                        <span>What is a PIN code and how is it different from a ZIP code?</span>
-                        <span class="faq-arrow">▼</span>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            <strong>PIN code</strong> stands for <em>Postal Index Number</em> — a 6-digit code used by India Post to uniquely identify post offices and delivery areas in India. <strong>ZIP code</strong> (Zone Improvement Plan) is the equivalent used in the United States, typically 5 digits (or 9 with ZIP+4). Both serve the same purpose of routing mail to the correct delivery location.
-                        </div>
-                    </div>
-                </div>
-                <div class="faq-item fade-up">
-                    <button class="faq-question" id="faq-btn-5">
-                        <span>Does it work on mobile phones?</span>
-                        <span class="faq-arrow">▼</span>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Yes! Our pin code location map tool is fully <strong>mobile-optimized</strong>. It works flawlessly on all smartphones and tablets — iPhone, Android, iPad, and more. You can use GPS on your phone for the most accurate location-based pin code lookup.
-                        </div>
-                    </div>
-                </div>
-                <div class="faq-item fade-up">
-                    <button class="faq-question" id="faq-btn-6">
-                        <span>How accurate is the pin code data?</span>
-                        <span class="faq-arrow">▼</span>
-                    </button>
-                    <div class="faq-answer">
-                        <div class="faq-answer-inner">
-                            Our pin code database is sourced from <strong>official postal authorities</strong> and updated regularly to ensure maximum accuracy. We cross-reference data from India Post, USPS, Royal Mail, and other national postal services to provide the most reliable results possible.
-                        </div>
-                    </div>
-                </div>
+                <div class="faq-item fade-up"><button class="faq-question"><span>How do I find the pin code of my current location on a map?</span><span class="faq-arrow">▼</span></button><div class="faq-answer"><div class="faq-answer-inner">Scroll to the map tool above and click the <strong>"📍 My Location"</strong> button. Allow GPS access in your browser and the tool will instantly detect your position and display the postal PIN code on the map.</div></div></div>
+                <div class="faq-item fade-up"><button class="faq-question"><span>Is this pin code finder tool free to use?</span><span class="faq-arrow">▼</span></button><div class="faq-answer"><div class="faq-answer-inner">Yes! It's <strong>100% free</strong>. No signup, no downloads, no hidden charges. Just open the map and find any pin code instantly.</div></div></div>
+                <div class="faq-item fade-up"><button class="faq-question"><span>Can I find pin codes for any location worldwide?</span><span class="faq-arrow">▼</span></button><div class="faq-answer"><div class="faq-answer-inner">Yes! Our tool supports postal codes for <strong>India, USA, UK, Canada, Australia</strong> and <strong>200+ countries</strong> worldwide using OpenStreetMap data.</div></div></div>
+                <div class="faq-item fade-up"><button class="faq-question"><span>What is a PIN code and how is it different from a ZIP code?</span><span class="faq-arrow">▼</span></button><div class="faq-answer"><div class="faq-answer-inner"><strong>PIN code</strong> (Postal Index Number) is a 6-digit code used in India. <strong>ZIP code</strong> (Zone Improvement Plan) is the 5-digit equivalent used in the USA. Both serve the same purpose — routing mail to correct locations.</div></div></div>
+                <div class="faq-item fade-up"><button class="faq-question"><span>Does it work on mobile phones?</span><span class="faq-arrow">▼</span></button><div class="faq-answer"><div class="faq-answer-inner">Absolutely! The tool is fully <strong>mobile-optimized</strong> and works on all smartphones with GPS for accurate location-based lookups.</div></div></div>
+                <div class="faq-item fade-up"><button class="faq-question"><span>How accurate is the pin code data?</span><span class="faq-arrow">▼</span></button><div class="faq-answer"><div class="faq-answer-inner">We use <strong>OpenStreetMap's Nominatim</strong> geocoding service, which is sourced from community-verified map data and regularly updated for accuracy.</div></div></div>
             </div>
         </div>
     </section>
 
-    <!-- ========== BOTTOM CTA ========== -->
-    <section class="section cta-section">
+    <!-- BOTTOM CTA -->
+    <section class="section">
         <div class="container">
             <div class="cta-box fade-up">
                 <h2>Don't Waste Time Searching — <span class="text-gradient">Find Your Pin Code Instantly</span></h2>
                 <p>Our interactive map pinpoints your exact postal code in seconds. Try it now — it's completely free.</p>
-                <a href="https://www.yoursite.com/checkout" class="btn btn-primary" id="bottom-cta-button">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    Find Pin Code of My Location on Map →
+                <a href="#map-tool" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Find Pin Code of My Location on Map ↑
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- ========== FOOTER ========== -->
+    <!-- FOOTER -->
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
-                <div class="footer-brand">
-                    <a href="#" class="logo">Pin<span>Code</span>Finder</a>
-                    <p>The fastest and most accurate way to find the pin code of any location on a map. Trusted by millions of users worldwide for postal code, ZIP code, and area code lookups.</p>
-                </div>
-                <div>
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#how-it-works">How It Works</a></li>
-                        <li><a href="#about">About Pin Codes</a></li>
-                        <li><a href="#faq">FAQ</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4>Tools</h4>
-                    <ul>
-                        <li><a href="https://www.yoursite.com/checkout">Pin Code Finder</a></li>
-                        <li><a href="https://www.yoursite.com/checkout">ZIP Code Lookup</a></li>
-                        <li><a href="https://www.yoursite.com/checkout">Postcode Search</a></li>
-                        <li><a href="https://www.yoursite.com/checkout">Area Code Map</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4>Popular Searches</h4>
-                    <ul>
-                        <li><a href="https://www.yoursite.com/checkout">Pin Code of Delhi</a></li>
-                        <li><a href="https://www.yoursite.com/checkout">Pin Code of Mumbai</a></li>
-                        <li><a href="https://www.yoursite.com/checkout">My Area Pin Code</a></li>
-                        <li><a href="https://www.yoursite.com/checkout">Nearest Post Office</a></li>
-                    </ul>
-                </div>
+                <div class="footer-brand"><a href="#" class="logo">Pin<span>Code</span>Finder</a><p>The fastest and most accurate way to find the pin code of any location on a map. Powered by OpenStreetMap.</p></div>
+                <div><h4>Quick Links</h4><ul><li><a href="#map-tool">Find Pin Code</a></li><li><a href="#features">Features</a></li><li><a href="#how-it-works">How It Works</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+                <div><h4>Popular Searches</h4><ul><li><a href="#map-tool">Pin Code of Delhi</a></li><li><a href="#map-tool">Pin Code of Mumbai</a></li><li><a href="#map-tool">My Area Pin Code</a></li><li><a href="#map-tool">Nearest Post Office</a></li></ul></div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 PinCodeFinder. All rights reserved. | <a href="#" style="color: var(--text-muted);">Privacy Policy</a> · <a href="#" style="color: var(--text-muted);">Terms of Service</a></p>
-            </div>
+            <div class="footer-bottom"><p>&copy; 2026 PinCodeFinder. All rights reserved. Powered by OpenStreetMap & Nominatim.</p></div>
         </div>
     </footer>
 
-    <!-- ========== STICKY CTA BAR ========== -->
-    <div class="sticky-cta" id="stickyCta">
-        <div class="container">
-            <p>📍 Find the <strong>pin code of your location</strong> on map — Free & Instant!</p>
-            <a href="https://www.yoursite.com/checkout" class="btn btn-primary" id="sticky-cta-button">Find My Pin Code →</a>
-        </div>
-    </div>
-
-    <!-- ========== JAVASCRIPT ========== -->
     <script>
-        // Navbar scroll effect
+        // NAVBAR
         const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            navbar.classList.toggle('scrolled', window.scrollY > 50);
-        });
-
-        // Mobile toggle
+        window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 50));
         const mobileToggle = document.getElementById('mobileToggle');
         const navLinks = document.getElementById('navLinks');
-        mobileToggle.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-        // Close mobile menu on link click
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => navLinks.classList.remove('active'));
-        });
+        mobileToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
+        navLinks.querySelectorAll('a').forEach(l => l.addEventListener('click', () => navLinks.classList.remove('active')));
 
-        // FAQ accordion
-        document.querySelectorAll('.faq-question').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const item = btn.parentElement;
-                const answer = item.querySelector('.faq-answer');
-                const isActive = item.classList.contains('active');
+        // SCROLL ANIMATIONS
+        const fadeObs = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); fadeObs.unobserve(e.target); }}), {threshold:.1,rootMargin:'0px 0px -40px 0px'});
+        document.querySelectorAll('.fade-up').forEach(el => fadeObs.observe(el));
 
-                // Close all items
-                document.querySelectorAll('.faq-item').forEach(faq => {
-                    faq.classList.remove('active');
-                    faq.querySelector('.faq-answer').style.maxHeight = null;
+        // SMOOTH SCROLL
+        document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', function(e){ e.preventDefault(); const t=document.querySelector(this.getAttribute('href')); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); }));
+
+        // FAQ
+        document.querySelectorAll('.faq-question').forEach(btn => btn.addEventListener('click', () => {
+            const item = btn.parentElement, ans = item.querySelector('.faq-answer'), isActive = item.classList.contains('active');
+            document.querySelectorAll('.faq-item').forEach(f => { f.classList.remove('active'); f.querySelector('.faq-answer').style.maxHeight = null; });
+            if(!isActive){ item.classList.add('active'); ans.style.maxHeight = ans.scrollHeight + 'px'; }
+        }));
+
+        // ============ MAP FUNCTIONALITY ============
+        let map, marker;
+
+        // Initialize map
+        function initMap() {
+            map = L.map('map').setView([20.5937, 78.9629], 5); // Default: India center
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Click on map to find pin code
+            map.on('click', function(e) {
+                placeMarkerAndLookup(e.latlng.lat, e.latlng.lng);
+            });
+        }
+
+        function placeMarkerAndLookup(lat, lng) {
+            if (marker) map.removeLayer(marker);
+            marker = L.marker([lat, lng]).addTo(map);
+            map.setView([lat, lng], Math.max(map.getZoom(), 14));
+            lookupPinCode(lat, lng);
+        }
+
+        function showLoading(show) {
+            document.getElementById('loadingMsg').style.display = show ? 'block' : 'none';
+            if(show) { document.getElementById('resultPanel').classList.remove('active'); }
+        }
+
+        async function lookupPinCode(lat, lng) {
+            showLoading(true);
+            try {
+                const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
+                    headers: { 'Accept-Language': 'en' }
                 });
-
-                // Open clicked item if it wasn't active
-                if (!isActive) {
-                    item.classList.add('active');
-                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                const data = await resp.json();
+                if (data && data.address) {
+                    displayResult(data, lat, lng);
+                } else {
+                    showError('Could not find details for this location. Try clicking nearby.');
                 }
-            });
-        });
+            } catch(err) {
+                showError('Network error. Please check your internet and try again.');
+            }
+            showLoading(false);
+        }
 
-        // Sticky CTA visibility
-        const stickyCta = document.getElementById('stickyCta');
-        const heroSection = document.getElementById('hero');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                stickyCta.classList.toggle('visible', !entry.isIntersecting);
-            });
-        }, { threshold: 0.3 });
-        observer.observe(heroSection);
+        function displayResult(data, lat, lng) {
+            const addr = data.address;
+            const pinCode = addr.postcode || 'Not Available';
+            const area = addr.suburb || addr.neighbourhood || addr.village || addr.hamlet || addr.town || '';
+            const city = addr.city || addr.town || addr.county || addr.state_district || '';
+            const district = addr.state_district || addr.county || '';
+            const state = addr.state || '';
+            const country = addr.country || '';
 
-        // Scroll animation (fade-up)
-        const fadeElements = document.querySelectorAll('.fade-up');
-        const fadeObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    fadeObserver.unobserve(entry.target);
+            const panel = document.getElementById('resultPanel');
+            const grid = document.getElementById('resultGrid');
+
+            grid.innerHTML = `
+                <div class="result-item"><div class="label">📮 Pin / Postal Code</div><div class="value pin-highlight">${pinCode}</div></div>
+                <div class="result-item"><div class="label">📍 Area / Locality</div><div class="value">${area || 'N/A'}</div></div>
+                <div class="result-item"><div class="label">🏙️ City</div><div class="value">${city || 'N/A'}</div></div>
+                <div class="result-item"><div class="label">🏛️ District</div><div class="value">${district || 'N/A'}</div></div>
+                <div class="result-item"><div class="label">🗺️ State</div><div class="value">${state || 'N/A'}</div></div>
+                <div class="result-item"><div class="label">🌍 Country</div><div class="value">${country || 'N/A'}</div></div>
+            `;
+            panel.classList.add('active');
+
+            // Update marker popup
+            if (marker) {
+                marker.bindPopup(`<div style="text-align:center;font-family:var(--font)"><strong style="font-size:1.2em;color:#2563eb">${pinCode}</strong><br><small>${area ? area + ', ' : ''}${city}</small></div>`).openPopup();
+            }
+        }
+
+        function showError(msg) {
+            const panel = document.getElementById('resultPanel');
+            const grid = document.getElementById('resultGrid');
+            grid.innerHTML = `<div class="result-item" style="grid-column:1/-1"><div class="value" style="color:#f87171;font-size:1rem">⚠️ ${msg}</div></div>`;
+            panel.classList.add('active');
+        }
+
+        // GPS Location
+        function useMyLocation() {
+            const btn = document.getElementById('gpsBtn');
+            btn.textContent = '⏳ Detecting...';
+            btn.disabled = true;
+
+            if (!navigator.geolocation) {
+                alert('Geolocation is not supported by your browser.');
+                btn.textContent = '📍 My Location';
+                btn.disabled = false;
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const { latitude, longitude } = pos.coords;
+                    placeMarkerAndLookup(latitude, longitude);
+                    map.setView([latitude, longitude], 16);
+                    btn.textContent = '📍 My Location';
+                    btn.disabled = false;
+                },
+                (err) => {
+                    let msg = 'Unable to get your location. ';
+                    if (err.code === 1) msg += 'Please allow location access in your browser settings.';
+                    else if (err.code === 2) msg += 'Location unavailable. Try again.';
+                    else msg += 'Request timed out. Try again.';
+                    alert(msg);
+                    btn.textContent = '📍 My Location';
+                    btn.disabled = false;
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
+
+        // Search by address
+        async function searchLocation() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) { document.getElementById('searchInput').focus(); return; }
+
+            showLoading(true);
+            try {
+                const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&addressdetails=1`, {
+                    headers: { 'Accept-Language': 'en' }
+                });
+                const results = await resp.json();
+                if (results && results.length > 0) {
+                    const r = results[0];
+                    placeMarkerAndLookup(parseFloat(r.lat), parseFloat(r.lon));
+                } else {
+                    showError('Location not found. Try a different search term.');
                 }
-            });
-        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-        fadeElements.forEach(el => fadeObserver.observe(el));
+            } catch(err) {
+                showError('Network error. Please check your internet.');
+            }
+            showLoading(false);
+        }
 
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
+        // Enter key for search
+        document.getElementById('searchInput').addEventListener('keydown', (e) => { if(e.key === 'Enter') searchLocation(); });
+
+        // Init map on page load
+        initMap();
     </script>
 </body>
 </html>
