@@ -97,6 +97,12 @@
         .result-item .value.pin-highlight{font-size:1.4rem;color:var(--accent)}
         .loading-msg{color:var(--text-secondary);text-align:center;padding:12px;font-size:.9rem}
 
+        /* LAYER CONTROL DARK THEME */
+        .leaflet-control-layers{background:rgba(15,23,42,.92)!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:10px!important;color:var(--text-primary)!important;backdrop-filter:blur(12px);box-shadow:0 4px 20px rgba(0,0,0,.4)!important}
+        .leaflet-control-layers-toggle{width:36px!important;height:36px!important;background-size:20px 20px!important}
+        .leaflet-control-layers label{color:var(--text-primary)!important;font-size:.9rem;padding:3px 0}
+        .leaflet-control-layers-separator{border-top:1px solid rgba(255,255,255,.1)!important}
+
         /* FEATURES */
         .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:48px}
         .feature-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:32px;backdrop-filter:blur(20px);transition:all .3s;position:relative;overflow:hidden}
@@ -378,27 +384,85 @@
         }));
 
         // ============ MAP FUNCTIONALITY ============
-        let map, marker;
+        let map, marker, accuracyCircle;
 
         // Initialize map
         function initMap() {
             map = L.map('map').setView([20.5937, 78.9629], 5); // Default: India center
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+
+            // Street View (default)
+            const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                 maxZoom: 19
-            }).addTo(map);
+            });
+
+            // Satellite View (ESRI World Imagery - free, no API key)
+            const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: '&copy; Esri, Maxar, Earthstar Geographics',
+                maxZoom: 19
+            });
+
+            // Satellite + Labels (Hybrid)
+            const hybridLayer = L.layerGroup([
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: '&copy; Esri, Maxar, Earthstar Geographics',
+                    maxZoom: 19
+                }),
+                L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}.png', {
+                    attribution: '&copy; Stamen Design',
+                    maxZoom: 19,
+                    opacity: 0.7
+                })
+            ]);
+
+            // Terrain View
+            const terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenTopoMap',
+                maxZoom: 17
+            });
+
+            // Add default layer
+            streetLayer.addTo(map);
+
+            // Layer control
+            const baseMaps = {
+                "🗺️ Street": streetLayer,
+                "🛰️ Satellite": satelliteLayer,
+                "🛰️ Hybrid": hybridLayer,
+                "⛰️ Terrain": terrainLayer
+            };
+            L.control.layers(baseMaps, null, { position: 'topright', collapsed: true }).addTo(map);
 
             // Click on map to find pin code
             map.on('click', function(e) {
+                clearAccuracyCircle();
                 placeMarkerAndLookup(e.latlng.lat, e.latlng.lng);
             });
         }
 
-        function placeMarkerAndLookup(lat, lng) {
+        function clearAccuracyCircle() {
+            if (accuracyCircle) { map.removeLayer(accuracyCircle); accuracyCircle = null; }
+        }
+
+        function placeMarkerAndLookup(lat, lng, accuracyMeters) {
             if (marker) map.removeLayer(marker);
             marker = L.marker([lat, lng]).addTo(map);
             map.setView([lat, lng], Math.max(map.getZoom(), 14));
-            lookupPinCode(lat, lng);
+
+            // Show accuracy circle if accuracy info available
+            if (accuracyMeters) {
+                clearAccuracyCircle();
+                accuracyCircle = L.circle([lat, lng], {
+                    radius: accuracyMeters,
+                    color: '#2563eb',
+                    fillColor: '#60a5fa',
+                    fillOpacity: 0.12,
+                    weight: 2,
+                    dashArray: '6 4'
+                }).addTo(map);
+            }
+
+            lookupPinCode(lat, lng, accuracyMeters);
         }
 
         function showLoading(show) {
@@ -406,7 +470,7 @@
             if(show) { document.getElementById('resultPanel').classList.remove('active'); }
         }
 
-        async function lookupPinCode(lat, lng) {
+        async function lookupPinCode(lat, lng, accuracyMeters) {
             showLoading(true);
             try {
                 const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
@@ -414,7 +478,7 @@
                 });
                 const data = await resp.json();
                 if (data && data.address) {
-                    displayResult(data, lat, lng);
+                    displayResult(data, lat, lng, accuracyMeters);
                 } else {
                     showError('Could not find details for this location. Try clicking nearby.');
                 }
@@ -424,7 +488,7 @@
             showLoading(false);
         }
 
-        function displayResult(data, lat, lng) {
+        function displayResult(data, lat, lng, accuracyMeters) {
             const addr = data.address;
             const pinCode = addr.postcode || 'Not Available';
             const area = addr.suburb || addr.neighbourhood || addr.village || addr.hamlet || addr.town || '';
@@ -432,6 +496,19 @@
             const district = addr.state_district || addr.county || '';
             const state = addr.state || '';
             const country = addr.country || '';
+
+            // Build accuracy info string
+            let accuracyInfo = '';
+            if (accuracyMeters !== undefined) {
+                if (accuracyMeters <= 100) {
+                    accuracyInfo = `<span style="color:#06d6a0">✅ High Accuracy (~${Math.round(accuracyMeters)}m)</span>`;
+                } else if (accuracyMeters <= 1000) {
+                    accuracyInfo = `<span style="color:#f59e0b">⚠️ Medium Accuracy (~${Math.round(accuracyMeters)}m)</span>`;
+                } else {
+                    const km = (accuracyMeters / 1000).toFixed(1);
+                    accuracyInfo = `<span style="color:#f87171">❌ Low Accuracy (~${km}km) — Result may be wrong! Try on mobile with GPS on, or search your city/village name manually.</span>`;
+                }
+            }
 
             const panel = document.getElementById('resultPanel');
             const grid = document.getElementById('resultGrid');
@@ -443,12 +520,14 @@
                 <div class="result-item"><div class="label">🏛️ District</div><div class="value">${district || 'N/A'}</div></div>
                 <div class="result-item"><div class="label">🗺️ State</div><div class="value">${state || 'N/A'}</div></div>
                 <div class="result-item"><div class="label">🌍 Country</div><div class="value">${country || 'N/A'}</div></div>
+                ${accuracyInfo ? `<div class="result-item" style="grid-column:1/-1"><div class="label">🎯 GPS Accuracy</div><div class="value" style="font-size:.9rem">${accuracyInfo}</div></div>` : ''}
+                <div class="result-item" style="grid-column:1/-1"><div class="label">📐 Coordinates</div><div class="value" style="font-size:.85rem;color:var(--text-secondary)">${lat.toFixed(6)}, ${lng.toFixed(6)}</div></div>
             `;
             panel.classList.add('active');
 
             // Update marker popup
             if (marker) {
-                marker.bindPopup(`<div style="text-align:center;font-family:var(--font)"><strong style="font-size:1.2em;color:#2563eb">${pinCode}</strong><br><small>${area ? area + ', ' : ''}${city}</small></div>`).openPopup();
+                marker.bindPopup(`<div style="text-align:center;font-family:var(--font)"><strong style="font-size:1.2em;color:#2563eb">${pinCode}</strong><br><small>${area ? area + ', ' : ''}${city}</small>${accuracyMeters && accuracyMeters > 5000 ? '<br><small style="color:#f87171">⚠️ Low GPS accuracy</small>' : ''}</div>`).openPopup();
             }
         }
 
@@ -459,38 +538,93 @@
             panel.classList.add('active');
         }
 
-        // GPS Location
+        // GPS Location - improved with multiple attempts and fallback
         function useMyLocation() {
             const btn = document.getElementById('gpsBtn');
-            btn.textContent = '⏳ Detecting...';
+            btn.innerHTML = '⏳ Detecting GPS...';
             btn.disabled = true;
 
             if (!navigator.geolocation) {
-                alert('Geolocation is not supported by your browser.');
-                btn.textContent = '📍 My Location';
+                alert('Geolocation is not supported by your browser. Please search your location manually.');
+                btn.innerHTML = '📍 My Location';
                 btn.disabled = false;
                 return;
             }
 
+            // First try: High accuracy (uses GPS on mobile, WiFi triangulation)
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
-                    const { latitude, longitude } = pos.coords;
-                    placeMarkerAndLookup(latitude, longitude);
-                    map.setView([latitude, longitude], 16);
-                    btn.textContent = '📍 My Location';
-                    btn.disabled = false;
+                    handleGPSSuccess(pos, btn);
                 },
                 (err) => {
-                    let msg = 'Unable to get your location. ';
-                    if (err.code === 1) msg += 'Please allow location access in your browser settings.';
-                    else if (err.code === 2) msg += 'Location unavailable. Try again.';
-                    else msg += 'Request timed out. Try again.';
-                    alert(msg);
-                    btn.textContent = '📍 My Location';
-                    btn.disabled = false;
+                    // If high accuracy fails, try again with low accuracy
+                    console.warn('High accuracy GPS failed, trying low accuracy...', err);
+                    btn.innerHTML = '⏳ Trying again...';
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            handleGPSSuccess(pos, btn);
+                        },
+                        (err2) => {
+                            // Both attempts failed - try IP-based geolocation as last resort
+                            console.warn('Browser GPS failed entirely, trying IP geolocation...', err2);
+                            btn.innerHTML = '⏳ Using IP location...';
+                            fallbackIPLocation(btn);
+                        },
+                        { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+                    );
                 },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
             );
+        }
+
+        function handleGPSSuccess(pos, btn) {
+            const { latitude, longitude, accuracy } = pos.coords;
+            console.log(`GPS Location: ${latitude}, ${longitude}, Accuracy: ${accuracy}m`);
+
+            // If accuracy is very poor (>50km), it's likely IP-based, warn user
+            if (accuracy > 50000) {
+                btn.innerHTML = '⏳ Using IP location...';
+                fallbackIPLocation(btn);
+                return;
+            }
+
+            placeMarkerAndLookup(latitude, longitude, accuracy);
+            // Zoom level based on accuracy
+            let zoom = 16;
+            if (accuracy > 10000) zoom = 12;
+            else if (accuracy > 5000) zoom = 13;
+            else if (accuracy > 1000) zoom = 14;
+            else if (accuracy > 500) zoom = 15;
+            map.setView([latitude, longitude], zoom);
+            btn.innerHTML = '📍 My Location';
+            btn.disabled = false;
+        }
+
+        // Fallback: IP-based geolocation using free API
+        async function fallbackIPLocation(btn) {
+            try {
+                // Try ipapi.co (free, no key needed, gives good accuracy for India)
+                const resp = await fetch('https://ipapi.co/json/', { timeout: 8000 });
+                const data = await resp.json();
+                if (data && data.latitude && data.longitude && !data.error) {
+                    const lat = parseFloat(data.latitude);
+                    const lng = parseFloat(data.longitude);
+                    // IP-based accuracy is typically city-level (~5-20km)
+                    const estimatedAccuracy = 15000; // ~15km for IP
+                    placeMarkerAndLookup(lat, lng, estimatedAccuracy);
+                    map.setView([lat, lng], 12);
+                    btn.innerHTML = '📍 My Location';
+                    btn.disabled = false;
+                    return;
+                }
+            } catch(e) {
+                console.warn('ipapi.co failed:', e);
+            }
+
+            // If everything fails
+            alert('Unable to detect your location automatically.\n\nPlease type your city or village name in the search box and click Search.\n\nTip: On mobile, turn on GPS/Location for accurate results.');
+            btn.innerHTML = '📍 My Location';
+            btn.disabled = false;
         }
 
         // Search by address
@@ -498,6 +632,7 @@
             const query = document.getElementById('searchInput').value.trim();
             if (!query) { document.getElementById('searchInput').focus(); return; }
 
+            clearAccuracyCircle();
             showLoading(true);
             try {
                 const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&addressdetails=1`, {
