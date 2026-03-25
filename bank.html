@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Bank by Pin Code & IFSC Code – Search Bank Branch Details</title>
+    <meta name="description" content="Find bank branch details by Pin Code or IFSC Code. Search any bank's name, address, branch, MICR code, district, and state. Instant, free & accurate bank finder.">
+    <meta name="keywords" content="find bank by pin code, IFSC code search, bank branch finder, bank address by pin code, IFSC lookup, bank details by pincode, bank near me">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://find-my-pin-code.vercel.app/bank.html">
+    <meta property="og:title" content="Find Bank by Pin Code & IFSC Code – Instant Bank Branch Finder">
+    <meta property="og:description" content="Search bank details by IFSC code or find banks in any pin code area. Get branch name, address, MICR & more.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://find-my-pin-code.vercel.app/bank.html">
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebApplication","name":"Bank Finder by Pin Code & IFSC","url":"https://find-my-pin-code.vercel.app/bank.html","description":"Find bank branch details by Pin Code or IFSC Code in India.","applicationCategory":"UtilityApplication","operatingSystem":"All","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+    </script>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I find a bank branch by IFSC code?","acceptedAnswer":{"@type":"Answer","text":"Enter the 11-character IFSC code in the search box and click Search. You'll get the bank name, branch, address, city, district, state, and MICR code instantly."}},{"@type":"Question","name":"Can I search banks by pin code?","acceptedAnswer":{"@type":"Answer","text":"Yes! Enter a 6-digit PIN code to find the area details and all associated post offices. For bank-specific details, use the IFSC code search."}},{"@type":"Question","name":"What is an IFSC code?","acceptedAnswer":{"@type":"Answer","text":"IFSC (Indian Financial System Code) is an 11-character alphanumeric code used to identify bank branches for electronic fund transfers like NEFT, RTGS, and IMPS."}}]}
+    </script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* TAB SWITCHER */
+        .tab-bar{display:flex;gap:0;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);margin-bottom:0;width:fit-content}
+        .tab-btn{padding:12px 24px;background:none;border:none;color:var(--text-muted);font-weight:600;font-size:.9rem;cursor:pointer;transition:all .3s;font-family:var(--font);display:flex;align-items:center;gap:6px}
+        .tab-btn.active{background:var(--primary);color:#fff}
+        .tab-btn:hover:not(.active){color:var(--text-primary);background:rgba(255,255,255,.06)}
+
+        /* BANK CARD EXTRAS */
+        .bank-detail-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+        .bank-detail-row:last-child{border-bottom:none}
+        .bank-detail-label{min-width:100px;font-size:.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;flex-shrink:0}
+        .bank-detail-value{font-size:.95rem;color:var(--text-secondary);font-weight:500}
+        .bank-detail-value.highlight{color:var(--accent);font-weight:700;font-size:1.05rem}
+        .copy-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:var(--text-muted);padding:4px 10px;font-size:.75rem;cursor:pointer;transition:all .2s;font-family:var(--font);margin-left:auto;flex-shrink:0}
+        .copy-btn:hover{background:rgba(255,255,255,.12);color:var(--text-primary)}
+    </style>
+</head>
+<body>
+    <div class="bg-orbs" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">Pin<span>Code</span>Finder</a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Find Pin Code</a></li>
+                <li><a href="post-office.html">Post Office</a></li>
+                <li><a href="bank.html" class="active-link">Bank / IFSC</a></li>
+                <li><a href="index.html#faq">FAQ</a></li>
+            </ul>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero text-center">
+        <div class="container fade-up">
+            <span class="badge">🏦 Bank & IFSC Finder</span>
+            <h1>Find <span class="text-gradient">Bank Details</span> by IFSC or Pin Code</h1>
+            <p>Search bank branch details using IFSC code, or find area info by pin code. Get bank name, address, MICR code, district & state instantly.</p>
+        </div>
+    </section>
+
+    <!-- SEARCH TOOL -->
+    <section class="section tool-section" id="search-tool" style="padding-top:0">
+        <div class="container">
+            <div class="tool-wrapper fade-up">
+                <div class="tool-controls" style="flex-direction:column;gap:16px">
+                    <!-- Tabs -->
+                    <div class="tab-bar">
+                        <button class="tab-btn active" id="tabIfsc" onclick="switchTab('ifsc')">🏦 IFSC Code</button>
+                        <button class="tab-btn" id="tabPin" onclick="switchTab('pin')">📮 Pin Code</button>
+                    </div>
+                    <!-- Search -->
+                    <div style="display:flex;gap:8px;width:100%">
+                        <div class="search-box" style="flex:1">
+                            <input type="text" id="searchInput" placeholder="Enter IFSC code (e.g. SBIN0000628)" maxlength="11" aria-label="Search IFSC or Pin Code">
+                            <button class="tool-btn tool-btn-search" onclick="doSearch()">🔍 Search</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="resultArea">
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-icon">🏦</div>
+                        <h3>Search by IFSC Code or Pin Code</h3>
+                        <p>Enter an 11-character IFSC code to get full bank branch details, or a 6-digit PIN code to find area information.</p>
+                    </div>
+                </div>
+                <div class="loading-msg" id="loadingMsg" style="display:none">⏳ Searching bank details...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- POPULAR BANKS -->
+    <section class="section">
+        <div class="container">
+            <div class="text-center fade-up">
+                <span class="badge">🔥 Popular IFSC Codes</span>
+                <h2>Search Branches of <span class="text-gradient">Popular Banks</span></h2>
+            </div>
+            <div class="features-grid" style="margin-top:32px">
+                <div class="feature-card fade-up" onclick="quickSearch('SBIN0000628','ifsc')" style="cursor:pointer">
+                    <div class="feature-icon" style="background:rgba(37,99,235,.12)">🏛️</div>
+                    <h3>SBI – SBIN0000628</h3>
+                    <p>State Bank of India main branch details. The largest public sector bank in India.</p>
+                </div>
+                <div class="feature-card fade-up" onclick="quickSearch('HDFC0000001','ifsc')" style="cursor:pointer">
+                    <div class="feature-icon" style="background:rgba(239,68,68,.12)">🏦</div>
+                    <h3>HDFC – HDFC0000001</h3>
+                    <p>HDFC Bank branch details. One of the leading private sector banks.</p>
+                </div>
+                <div class="feature-card fade-up" onclick="quickSearch('ICIC0000001','ifsc')" style="cursor:pointer">
+                    <div class="feature-icon" style="background:rgba(245,158,11,.12)">🏢</div>
+                    <h3>ICICI – ICIC0000001</h3>
+                    <p>ICICI Bank branch details. The largest private sector bank in India.</p>
+                </div>
+                <div class="feature-card fade-up" onclick="quickSearch('PUNB0001800','ifsc')" style="cursor:pointer">
+                    <div class="feature-icon" style="background:rgba(168,85,247,.12)">🏣</div>
+                    <h3>PNB – PUNB0001800</h3>
+                    <p>Punjab National Bank main branch details. A major public sector bank.</p>
+                </div>
+                <div class="feature-card fade-up" onclick="quickSearch('BARB0RAIPUR','ifsc')" style="cursor:pointer">
+                    <div class="feature-icon" style="background:rgba(6,214,160,.12)">🏛️</div>
+                    <h3>BOB – BARB0RAIPUR</h3>
+                    <p>Bank of Baroda Raipur branch details.</p>
+                </div>
+                <div class="feature-card fade-up" onclick="quickSearch('CNRB0000001','ifsc')" style="cursor:pointer">
+                    <div class="feature-icon" style="background:rgba(59,130,246,.12)">🏦</div>
+                    <h3>Canara – CNRB0000001</h3>
+                    <p>Canara Bank main branch details. Prominent public sector bank.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT IFSC -->
+    <section class="section content-section">
+        <div class="container">
+            <div class="content-grid">
+                <div class="content-text fade-up">
+                    <span class="badge">📖 What is IFSC?</span>
+                    <h2>Understanding <span class="text-gradient">IFSC Code</span></h2>
+                    <p><strong>IFSC</strong> (Indian Financial System Code) is an <strong>11-character alphanumeric code</strong> assigned by the Reserve Bank of India to every bank branch. It uniquely identifies each branch participating in electronic payment systems.</p>
+                    <p>IFSC codes are essential for:</p>
+                    <ul>
+                        <li><strong>NEFT</strong> — National Electronic Funds Transfer</li>
+                        <li><strong>RTGS</strong> — Real Time Gross Settlement</li>
+                        <li><strong>IMPS</strong> — Immediate Payment Service</li>
+                        <li><strong>UPI</strong> — Unified Payments Interface</li>
+                        <li>Online banking and mobile transfers</li>
+                    </ul>
+                </div>
+                <div class="content-text fade-up" style="transition-delay:.15s">
+                    <span class="badge">🔍 IFSC Format</span>
+                    <h2>How to Read <span class="text-gradient">IFSC Code</span></h2>
+                    <ul>
+                        <li><strong>First 4 characters</strong> — Bank code (e.g. SBIN = State Bank of India)</li>
+                        <li><strong>5th character</strong> — Always 0 (reserved for future use)</li>
+                        <li><strong>Last 6 characters</strong> — Branch code (unique for each branch)</li>
+                    </ul>
+                    <p style="margin-top:20px"><strong>Example:</strong> <span style="color:var(--accent);font-weight:700;font-size:1.1rem">SBIN0000628</span></p>
+                    <p>SBIN = State Bank of India, 0 = reserved, 000628 = specific branch code.</p>
+                    <div style="margin-top:28px"><a href="#search-tool" class="btn btn-primary">🔍 Search IFSC Code Now ↑</a></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+        <div class="container">
+            <div class="text-center fade-up"><span class="badge">❓ FAQs</span><h2>Frequently Asked Questions About <span class="text-gradient">Bank & IFSC Finder</span></h2></div>
+            <div class="faq-list">
+                <div class="faq-item fade-up"><button class="faq-question"><span>How do I find a bank branch by IFSC code?</span><span class="faq-arrow">▼</span></button><div class="faq-answer"><div class="faq-answer-inner">Enter the 11-character IFSC code in the search box above and click "Search". You'll instantly get the bank name, branch name, address, city, district, state, and MICR code.</div></div></div>
+                <div class="faq-item fade-up"><button class="faq-question"><span>Where can I find my bank's IFSC code?</span><span class="faq-arrow">▼</span></button><div class="faq-answer"><div class="faq-answer-inner">You can find your IFSC code on: your <strong>cheque book</strong> (printed on the cheque leaf), your <strong>bank passbook</strong>, <strong>netbanking portal</strong>, or by calling your bank branch directly.</div></div></div>
+                <div class="faq-item fade-up"><button class="faq-question"><span>What is the difference between IFSC and MICR?</span><span class="faq-arrow">▼</span></button><div class="faq-answer"><div class="faq-answer-inner"><strong>IFSC</strong> is used for electronic transfers (NEFT, RTGS, IMPS). <strong>MICR</strong> (Magnetic Ink Character Recognition) is a 9-digit code printed on cheques used for processing cheques in clearing houses. Both identify bank branches but are used for different purposes.</div></div></div>
+                <div class="faq-item fade-up"><button class="faq-question"><span>Is IFSC code same for all branches of a bank?</span><span class="faq-arrow">▼</span></button><div class="faq-answer"><div class="faq-answer-inner">No. Each branch of a bank has its own unique IFSC code. Even branches of the same bank in the same city will have different IFSC codes. Only the first 4 characters (bank code) remain the same.</div></div></div>
+                <div class="faq-item fade-up"><button class="faq-question"><span>Is this bank finder tool free?</span><span class="faq-arrow">▼</span></button><div class="faq-answer"><div class="faq-answer-inner">Yes! This tool is 100% free. No registration, no hidden charges. We use the <strong>Razorpay IFSC API</strong> which is publicly available and free to use.</div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section">
+        <div class="container">
+            <div class="cta-box fade-up">
+                <h2>Looking for <span class="text-gradient">Post Office Details</span>?</h2>
+                <p>Find all post offices in any pin code area with branch type, delivery status, and complete address.</p>
+                <a href="post-office.html" class="btn btn-primary">🏤 Open Post Office Finder</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand"><a href="index.html" class="logo">Pin<span>Code</span>Finder</a><p>The fastest way to find pin codes, post offices, and bank details for any area in India.</p></div>
+                <div><h4>Tools</h4><ul><li><a href="index.html">Pin Code Map Finder</a></li><li><a href="post-office.html">Post Office Finder</a></li><li><a href="bank.html">Bank / IFSC Finder</a></li></ul></div>
+                <div><h4>Popular Banks</h4><ul><li><a href="#" onclick="quickSearch('SBIN0000628','ifsc');return false">SBI – Main Branch</a></li><li><a href="#" onclick="quickSearch('HDFC0000001','ifsc');return false">HDFC Bank</a></li><li><a href="#" onclick="quickSearch('ICIC0000001','ifsc');return false">ICICI Bank</a></li><li><a href="#" onclick="quickSearch('PUNB0001800','ifsc');return false">PNB</a></li></ul></div>
+            </div>
+            <div class="footer-bottom"><p>&copy; 2026 PinCodeFinder. All rights reserved. IFSC data from Razorpay.</p></div>
+        </div>
+    </footer>
+
+    <script>
+        // NAVBAR
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', true));
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navLinks = document.getElementById('navLinks');
+        mobileToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
+        navLinks.querySelectorAll('a').forEach(l => l.addEventListener('click', () => navLinks.classList.remove('active')));
+
+        // SCROLL ANIMATIONS
+        const fadeObs = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); fadeObs.unobserve(e.target); }}), {threshold:.1,rootMargin:'0px 0px -40px 0px'});
+        document.querySelectorAll('.fade-up').forEach(el => fadeObs.observe(el));
+
+        // FAQ
+        document.querySelectorAll('.faq-question').forEach(btn => btn.addEventListener('click', () => {
+            const item = btn.parentElement, ans = item.querySelector('.faq-answer'), isActive = item.classList.contains('active');
+            document.querySelectorAll('.faq-item').forEach(f => { f.classList.remove('active'); f.querySelector('.faq-answer').style.maxHeight = null; });
+            if(!isActive){ item.classList.add('active'); ans.style.maxHeight = ans.scrollHeight + 'px'; }
+        }));
+
+        // Smooth scroll for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', function(e){ e.preventDefault(); const t=document.querySelector(this.getAttribute('href')); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); }));
+
+        // TAB LOGIC
+        let currentTab = 'ifsc';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.getElementById('tabIfsc').classList.toggle('active', tab === 'ifsc');
+            document.getElementById('tabPin').classList.toggle('active', tab === 'pin');
+            const input = document.getElementById('searchInput');
+            if (tab === 'ifsc') {
+                input.placeholder = 'Enter IFSC code (e.g. SBIN0000628)';
+                input.maxLength = 11;
+            } else {
+                input.placeholder = 'Enter 6-digit PIN code (e.g. 492001)';
+                input.maxLength = 6;
+            }
+            input.value = '';
+            input.focus();
+        }
+
+        // VALIDATION
+        function isValidIfsc(code) { return /^[A-Z]{4}0[A-Z0-9]{6}$/i.test(code); }
+        function isValidPin(pin) { return /^[1-9][0-9]{5}$/.test(pin); }
+
+        // QUICK SEARCH
+        function quickSearch(val, tab) {
+            switchTab(tab);
+            document.getElementById('searchInput').value = val;
+            doSearch();
+            document.getElementById('search-tool').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // MAIN SEARCH
+        function doSearch() {
+            if (currentTab === 'ifsc') {
+                searchIFSC();
+            } else {
+                searchPinCode();
+            }
+        }
+
+        // IFSC SEARCH
+        async function searchIFSC() {
+            const ifsc = document.getElementById('searchInput').value.trim().toUpperCase();
+            if (!ifsc) { document.getElementById('searchInput').focus(); return; }
+            if (!isValidIfsc(ifsc)) {
+                showError('Please enter a valid 11-character IFSC code (e.g. SBIN0000628).<br><small style="color:var(--text-muted)">Format: 4 letters + 0 + 6 alphanumeric characters</small>');
+                return;
+            }
+
+            showLoading(true);
+            try {
+                const resp = await fetch(`https://ifsc.razorpay.com/${ifsc}`);
+                if (resp.ok) {
+                    const data = await resp.json();
+                    displayBankResult(data);
+                } else if (resp.status === 404) {
+                    showError(`No bank found for IFSC code <strong>${ifsc}</strong>. Please verify the code and try again.`);
+                } else {
+                    showError('Error fetching bank details. Please try again.');
+                }
+            } catch(err) {
+                showError('Network error. Please check your internet connection and try again.');
+            }
+            showLoading(false);
+        }
+
+        // PIN CODE SEARCH (uses India Post API to show area + post offices)
+        async function searchPinCode() {
+            const pin = document.getElementById('searchInput').value.trim();
+            if (!pin) { document.getElementById('searchInput').focus(); return; }
+            if (!isValidPin(pin)) {
+                showError('Please enter a valid 6-digit PIN code (e.g. 492001).');
+                return;
+            }
+
+            showLoading(true);
+            try {
+                const resp = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+                const data = await resp.json();
+
+                if (data && data[0] && data[0].Status === 'Success' && data[0].PostOffice) {
+                    displayPinResult(data[0].PostOffice, pin);
+                } else {
+                    showError(`No results found for PIN code <strong>${pin}</strong>. Please check and try again.`);
+                }
+            } catch(err) {
+                showError('Network error. Please check your internet and try again.');
+            }
+            showLoading(false);
+        }
+
+        // DISPLAY BANK RESULT
+        function displayBankResult(data) {
+            const resultArea = document.getElementById('resultArea');
+            const rows = [
+                { label: 'Bank', value: data.BANK || 'N/A', highlight: true },
+                { label: 'Branch', value: data.BRANCH || 'N/A' },
+                { label: 'IFSC', value: data.IFSC || 'N/A', copy: true, highlight: true },
+                { label: 'MICR', value: data.MICR || 'N/A', copy: true },
+                { label: 'Address', value: data.ADDRESS || 'N/A' },
+                { label: 'City', value: data.CITY || 'N/A' },
+                { label: 'District', value: data.DISTRICT || 'N/A' },
+                { label: 'State', value: data.STATE || 'N/A' },
+                { label: 'Contact', value: data.CONTACT || 'N/A' },
+                { label: 'NEFT', value: data.NEFT ? '✅ Enabled' : '❌ Disabled' },
+                { label: 'RTGS', value: data.RTGS ? '✅ Enabled' : '❌ Disabled' },
+                { label: 'IMPS', value: data.IMPS ? '✅ Enabled' : '❌ Disabled' },
+                { label: 'UPI', value: data.UPI ? '✅ Enabled' : '❌ Disabled' },
+            ];
+
+            let html = `
+                <div class="po-cards" style="grid-template-columns:1fr;max-width:700px;margin:0 auto">
+                    <div class="po-card">
+                        <div class="po-card-header">
+                            <div class="po-card-icon bank">🏦</div>
+                            <div>
+                                <div class="po-card-title">${data.BANK || 'Bank Details'}</div>
+                                <div class="po-card-subtitle">${data.BRANCH || ''} Branch</div>
+                            </div>
+                        </div>
+            `;
+
+            rows.forEach(row => {
+                html += `
+                    <div class="bank-detail-row">
+                        <div class="bank-detail-label">${row.label}</div>
+                        <div class="bank-detail-value ${row.highlight ? 'highlight' : ''}">${row.value}</div>
+                        ${row.copy ? `<button class="copy-btn" onclick="copyText('${row.value}')">📋 Copy</button>` : ''}
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+            resultArea.innerHTML = html;
+        }
+
+        // DISPLAY PIN CODE RESULT (area info + post offices summary)
+        function displayPinResult(postOffices, pin) {
+            const resultArea = document.getElementById('resultArea');
+            const first = postOffices[0];
+            const count = postOffices.length;
+
+            let html = `
+                <div style="padding:20px;background:rgba(15,23,42,.95);border-bottom:1px solid rgba(255,255,255,.06)">
+                    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between">
+                        <div>
+                            <span style="font-size:.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px">Area Info for PIN Code</span>
+                            <div style="font-size:1.8rem;font-weight:800;color:var(--accent)">${pin}</div>
+                        </div>
+                        <div style="display:flex;gap:24px;flex-wrap:wrap">
+                            <div style="text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--text-primary)">${first.District || 'N/A'}</div><div style="font-size:.75rem;color:var(--text-muted)">District</div></div>
+                            <div style="text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--text-primary)">${first.State || 'N/A'}</div><div style="font-size:.75rem;color:var(--text-muted)">State</div></div>
+                            <div style="text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--text-primary)">${count}</div><div style="font-size:.75rem;color:var(--text-muted)">Post Offices</div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="po-cards">
+                    <div class="po-card" style="grid-column:1/-1;text-align:center;padding:32px">
+                        <div style="font-size:2rem;margin-bottom:12px">💡</div>
+                        <h3 style="margin-bottom:8px">Looking for Bank Details?</h3>
+                        <p style="color:var(--text-secondary);margin-bottom:16px">To find bank branch details, switch to the <strong>IFSC Code</strong> tab and enter the bank's IFSC code. You can find this on your cheque book or bank passbook.</p>
+                        <button class="btn btn-secondary" onclick="switchTab('ifsc')" style="margin-right:12px">🏦 Search by IFSC</button>
+                        <a href="post-office.html?pin=${pin}" class="btn btn-secondary">🏤 View Post Offices</a>
+                    </div>
+            `;
+
+            // Show post offices list
+            postOffices.forEach(po => {
+                const typeClass = po.BranchType === 'Head Office' ? 'ho' : (po.BranchType === 'Sub Office' ? 'so' : 'bo');
+                const typeLabel = po.BranchType === 'Head Office' ? 'H.O.' : (po.BranchType === 'Sub Office' ? 'S.O.' : 'B.O.');
+                html += `
+                    <div class="po-card">
+                        <div class="po-card-header">
+                            <div class="po-card-icon post">🏤</div>
+                            <div>
+                                <div class="po-card-title">${po.Name}</div>
+                                <div class="po-card-subtitle">
+                                    <span class="po-card-badge ${typeClass}">${typeLabel}</span>
+                                    <span class="po-card-badge ${po.DeliveryStatus === 'Delivery' ? 'delivery' : 'non-delivery'}">${po.DeliveryStatus || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="po-card-details">
+                            <div class="po-detail"><div class="detail-label">Division</div><div class="detail-value">${po.Division || 'N/A'}</div></div>
+                            <div class="po-detail"><div class="detail-label">Region</div><div class="detail-value">${po.Region || 'N/A'}</div></div>
+                            <div class="po-detail"><div class="detail-label">District</div><div class="detail-value">${po.District || 'N/A'}</div></div>
+                            <div class="po-detail"><div class="detail-label">State</div><div class="detail-value">${po.State || 'N/A'}</div></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            resultArea.innerHTML = html;
+        }
+
+        function showError(msg) {
+            document.getElementById('resultArea').innerHTML = `<div class="error-msg">⚠️ ${msg}</div>`;
+        }
+
+        function showLoading(show) {
+            document.getElementById('loadingMsg').style.display = show ? 'block' : 'none';
+            if(show) document.getElementById('resultArea').innerHTML = '';
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Quick visual feedback
+                const btn = event.target;
+                const orig = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => btn.textContent = orig, 1500);
+            }).catch(() => {
+                // Fallback
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+            });
+        }
+
+        // Enter key
+        document.getElementById('searchInput').addEventListener('keydown', e => { if(e.key === 'Enter') doSearch(); });
+
+        // Auto-focus
+        document.getElementById('searchInput').focus();
+
+        // Check URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const ifscParam = urlParams.get('ifsc');
+        const pinParam = urlParams.get('pin');
+        if (ifscParam && isValidIfsc(ifscParam)) {
+            switchTab('ifsc');
+            document.getElementById('searchInput').value = ifscParam.toUpperCase();
+            searchIFSC();
+        } else if (pinParam && isValidPin(pinParam)) {
+            switchTab('pin');
+            document.getElementById('searchInput').value = pinParam;
+            searchPinCode();
+        }
+    </script>
+</body>
+</html>

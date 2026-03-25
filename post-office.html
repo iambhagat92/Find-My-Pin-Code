@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Post Office by Pin Code – Search All Post Offices in Any Area</title>
+    <meta name="description" content="Find all post offices in any pin code area. Search by 6-digit PIN code to get post office names, branch types, delivery status, district, state and more. Free & instant.">
+    <meta name="keywords" content="post office by pin code, find post office, pin code post office, post office search, India post office finder, post office near me, pin code lookup">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://find-my-pin-code.vercel.app/post-office.html">
+    <meta property="og:title" content="Find Post Office by Pin Code – Instant Post Office Finder">
+    <meta property="og:description" content="Search all post offices in any pin code area. Get branch name, type, delivery status, district & state info.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://find-my-pin-code.vercel.app/post-office.html">
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebApplication","name":"Post Office Finder by Pin Code","url":"https://find-my-pin-code.vercel.app/post-office.html","description":"Find all post offices in any PIN code area of India.","applicationCategory":"UtilityApplication","operatingSystem":"All","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+    </script>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I find a post office by pin code?","acceptedAnswer":{"@type":"Answer","text":"Enter any 6-digit PIN code in the search box above and click Search. Our tool will instantly display all post offices in that area with their branch type, delivery status, district, and state."}},{"@type":"Question","name":"What details can I get about a post office?","acceptedAnswer":{"@type":"Answer","text":"You can get the post office name, branch type (Head Office, Sub Office, Branch Office), delivery status, division, region, district, state, and country."}},{"@type":"Question","name":"Is this post office finder free?","acceptedAnswer":{"@type":"Answer","text":"Yes, this tool is 100% free. No signup or downloads needed. Just enter a PIN code and get instant results."}}]}
+    </script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="bg-orbs" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">Pin<span>Code</span>Finder</a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Find Pin Code</a></li>
+                <li><a href="post-office.html" class="active-link">Post Office</a></li>
+                <li><a href="bank.html">Bank / IFSC</a></li>
+                <li><a href="index.html#faq">FAQ</a></li>
+            </ul>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero text-center">
+        <div class="container fade-up">
+            <span class="badge">🏤 Post Office Finder</span>
+            <h1>Find <span class="text-gradient">Post Office by Pin Code</span></h1>
+            <p>Enter any 6-digit PIN code to instantly find all post offices in that area — with branch type, delivery status, district, state, and more.</p>
+        </div>
+    </section>
+
+    <!-- SEARCH TOOL -->
+    <section class="section tool-section" id="search-tool" style="padding-top:0">
+        <div class="container">
+            <div class="tool-wrapper fade-up">
+                <div class="tool-controls">
+                    <div class="search-box">
+                        <input type="text" id="pinInput" placeholder="Enter 6-digit PIN code (e.g. 492001)" maxlength="6" inputmode="numeric" pattern="[0-9]*" aria-label="Enter PIN code">
+                        <button class="tool-btn tool-btn-search" id="searchBtn" onclick="searchPinCode()">🔍 Search</button>
+                    </div>
+                </div>
+                <div id="resultArea">
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-icon">🏤</div>
+                        <h3>Enter a PIN Code to Search</h3>
+                        <p>Type any 6-digit Indian PIN code above and tap Search to find all post offices in that area.</p>
+                    </div>
+                </div>
+                <div class="loading-msg" id="loadingMsg" style="display:none">⏳ Searching post offices...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- POPULAR PIN CODES -->
+    <section class="section">
+        <div class="container">
+            <div class="text-center fade-up">
+                <span class="badge">🔥 Popular Searches</span>
+                <h2>Search Post Offices in <span class="text-gradient">Popular Cities</span></h2>
+            </div>
+            <div class="features-grid" style="margin-top:32px">
+                <div class="feature-card fade-up" onclick="quickSearch('110001')" style="cursor:pointer">
+                    <div class="feature-icon">🏛️</div>
+                    <h3>New Delhi – 110001</h3>
+                    <p>Find all post offices in central Delhi including Connaught Place and Parliament area.</p>
+                </div>
+                <div class="feature-card fade-up" onclick="quickSearch('400001')" style="cursor:pointer">
+                    <div class="feature-icon">🌊</div>
+                    <h3>Mumbai – 400001</h3>
+                    <p>Search post offices in South Mumbai including Fort, CST, and marine areas.</p>
+                </div>
+                <div class="feature-card fade-up" onclick="quickSearch('492001')" style="cursor:pointer">
+                    <div class="feature-icon">🏯</div>
+                    <h3>Raipur – 492001</h3>
+                    <p>Find all post offices in Raipur, the capital city of Chhattisgarh.</p>
+                </div>
+                <div class="feature-card fade-up" onclick="quickSearch('560001')" style="cursor:pointer">
+                    <div class="feature-icon">💻</div>
+                    <h3>Bangalore – 560001</h3>
+                    <p>Search post offices in central Bangalore including MG Road and surrounding areas.</p>
+                </div>
+                <div class="feature-card fade-up" onclick="quickSearch('452001')" style="cursor:pointer">
+                    <div class="feature-icon">🕌</div>
+                    <h3>Indore – 452001</h3>
+                    <p>Find all post offices in Indore, the largest city of Madhya Pradesh.</p>
+                </div>
+                <div class="feature-card fade-up" onclick="quickSearch('700001')" style="cursor:pointer">
+                    <div class="feature-icon">🌉</div>
+                    <h3>Kolkata – 700001</h3>
+                    <p>Search post offices in central Kolkata including BBD Bagh and Dalhousie area.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section content-section" id="faq">
+        <div class="container">
+            <div class="text-center fade-up"><span class="badge">❓ FAQs</span><h2>Frequently Asked Questions About <span class="text-gradient">Post Office Finder</span></h2></div>
+            <div class="faq-list">
+                <div class="faq-item fade-up"><button class="faq-question"><span>How do I find a post office by pin code?</span><span class="faq-arrow">▼</span></button><div class="faq-answer"><div class="faq-answer-inner">Simply enter any 6-digit Indian PIN code in the search box above and click "Search". Our tool fetches real-time data from India Post and displays all post offices in that area.</div></div></div>
+                <div class="faq-item fade-up"><button class="faq-question"><span>What is the difference between H.O., S.O., and B.O.?</span><span class="faq-arrow">▼</span></button><div class="faq-answer"><div class="faq-answer-inner"><strong>H.O. (Head Office)</strong> is the main post office of a district. <strong>S.O. (Sub Office)</strong> operates under a Head Office. <strong>B.O. (Branch Office)</strong> is a smaller branch, usually in rural or remote areas, operating under a Sub Office.</div></div></div>
+                <div class="faq-item fade-up"><button class="faq-question"><span>What does "Delivery" vs "Non-Delivery" mean?</span><span class="faq-arrow">▼</span></button><div class="faq-answer"><div class="faq-answer-inner"><strong>Delivery</strong> post offices handle direct mail delivery to your address. <strong>Non-Delivery</strong> offices don't deliver mail directly — you need to collect from the counter or it's routed through a delivery office.</div></div></div>
+                <div class="faq-item fade-up"><button class="faq-question"><span>Is this data accurate and up-to-date?</span><span class="faq-arrow">▼</span></button><div class="faq-answer"><div class="faq-answer-inner">Yes, we fetch real-time data from the official India Post API (api.postalpincode.in). The data is maintained by India Post and updated frequently.</div></div></div>
+                <div class="faq-item fade-up"><button class="faq-question"><span>Can I find post offices outside India?</span><span class="faq-arrow">▼</span></button><div class="faq-answer"><div class="faq-answer-inner">This tool specifically uses India Post data and works with Indian 6-digit PIN codes. For international postal codes, use our <a href="index.html" style="color:var(--accent)">Pin Code Map Finder</a> tool.</div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section">
+        <div class="container">
+            <div class="cta-box fade-up">
+                <h2>Need to Find a <span class="text-gradient">Pin Code on Map</span>?</h2>
+                <p>Use our interactive map tool to click anywhere and find the pin code of that location instantly.</p>
+                <a href="index.html#map-tool" class="btn btn-primary">🗺️ Open Pin Code Map Finder</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand"><a href="index.html" class="logo">Pin<span>Code</span>Finder</a><p>The fastest way to find pin codes, post offices, and bank details for any area in India.</p></div>
+                <div><h4>Tools</h4><ul><li><a href="index.html">Pin Code Map Finder</a></li><li><a href="post-office.html">Post Office Finder</a></li><li><a href="bank.html">Bank / IFSC Finder</a></li></ul></div>
+                <div><h4>Popular PIN Codes</h4><ul><li><a href="#" onclick="quickSearch('110001');return false">Delhi – 110001</a></li><li><a href="#" onclick="quickSearch('400001');return false">Mumbai – 400001</a></li><li><a href="#" onclick="quickSearch('492001');return false">Raipur – 492001</a></li><li><a href="#" onclick="quickSearch('560001');return false">Bangalore – 560001</a></li></ul></div>
+            </div>
+            <div class="footer-bottom"><p>&copy; 2026 PinCodeFinder. All rights reserved. Data from India Post.</p></div>
+        </div>
+    </footer>
+
+    <script>
+        // NAVBAR
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', true));
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navLinks = document.getElementById('navLinks');
+        mobileToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
+        navLinks.querySelectorAll('a').forEach(l => l.addEventListener('click', () => navLinks.classList.remove('active')));
+
+        // SCROLL ANIMATIONS
+        const fadeObs = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); fadeObs.unobserve(e.target); }}), {threshold:.1,rootMargin:'0px 0px -40px 0px'});
+        document.querySelectorAll('.fade-up').forEach(el => fadeObs.observe(el));
+
+        // FAQ
+        document.querySelectorAll('.faq-question').forEach(btn => btn.addEventListener('click', () => {
+            const item = btn.parentElement, ans = item.querySelector('.faq-answer'), isActive = item.classList.contains('active');
+            document.querySelectorAll('.faq-item').forEach(f => { f.classList.remove('active'); f.querySelector('.faq-answer').style.maxHeight = null; });
+            if(!isActive){ item.classList.add('active'); ans.style.maxHeight = ans.scrollHeight + 'px'; }
+        }));
+
+        // PINCODE VALIDATION
+        function isValidPin(pin) {
+            return /^[1-9][0-9]{5}$/.test(pin);
+        }
+
+        // QUICK SEARCH
+        function quickSearch(pin) {
+            document.getElementById('pinInput').value = pin;
+            searchPinCode();
+            document.getElementById('search-tool').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // MAIN SEARCH
+        async function searchPinCode() {
+            const pin = document.getElementById('pinInput').value.trim();
+            if (!pin) { document.getElementById('pinInput').focus(); return; }
+            if (!isValidPin(pin)) {
+                showError('Please enter a valid 6-digit PIN code (e.g. 492001)');
+                return;
+            }
+
+            const loadingEl = document.getElementById('loadingMsg');
+            const resultArea = document.getElementById('resultArea');
+            loadingEl.style.display = 'block';
+            resultArea.innerHTML = '';
+
+            try {
+                const resp = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+                const data = await resp.json();
+
+                if (data && data[0]) {
+                    if (data[0].Status === 'Success' && data[0].PostOffice && data[0].PostOffice.length > 0) {
+                        displayResults(data[0].PostOffice, pin);
+                    } else if (data[0].Status === 'Error') {
+                        showError(`No post offices found for PIN code <strong>${pin}</strong>. Please check the PIN code and try again.`);
+                    } else {
+                        showError(`No results found for PIN code <strong>${pin}</strong>.`);
+                    }
+                } else {
+                    showError('Unexpected response. Please try again.');
+                }
+            } catch(err) {
+                showError('Network error. Please check your internet connection and try again.');
+            }
+            loadingEl.style.display = 'none';
+        }
+
+        function displayResults(postOffices, pin) {
+            const resultArea = document.getElementById('resultArea');
+            const count = postOffices.length;
+            const firstPO = postOffices[0];
+
+            // Summary bar
+            let html = `
+                <div style="padding:20px;background:rgba(15,23,42,.95);border-bottom:1px solid rgba(255,255,255,.06)">
+                    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between">
+                        <div>
+                            <span style="font-size:.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px">Results for PIN Code</span>
+                            <div style="font-size:1.8rem;font-weight:800;color:var(--accent)">${pin}</div>
+                        </div>
+                        <div style="display:flex;gap:24px;flex-wrap:wrap">
+                            <div style="text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--text-primary)">${count}</div><div style="font-size:.75rem;color:var(--text-muted)">Post Office${count > 1 ? 's' : ''}</div></div>
+                            <div style="text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--text-primary)">${firstPO.District || 'N/A'}</div><div style="font-size:.75rem;color:var(--text-muted)">District</div></div>
+                            <div style="text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--text-primary)">${firstPO.State || 'N/A'}</div><div style="font-size:.75rem;color:var(--text-muted)">State</div></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Cards
+            html += '<div class="po-cards">';
+            postOffices.forEach(po => {
+                const typeClass = po.BranchType === 'Head Office' ? 'ho' : (po.BranchType === 'Sub Office' ? 'so' : 'bo');
+                const typeLabel = po.BranchType === 'Head Office' ? 'H.O.' : (po.BranchType === 'Sub Office' ? 'S.O.' : 'B.O.');
+                const deliveryClass = po.DeliveryStatus === 'Delivery' ? 'delivery' : 'non-delivery';
+
+                html += `
+                    <div class="po-card">
+                        <div class="po-card-header">
+                            <div class="po-card-icon post">🏤</div>
+                            <div>
+                                <div class="po-card-title">${po.Name}</div>
+                                <div class="po-card-subtitle">
+                                    <span class="po-card-badge ${typeClass}">${typeLabel}</span>
+                                    <span class="po-card-badge ${deliveryClass}">${po.DeliveryStatus || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="po-card-details">
+                            <div class="po-detail"><div class="detail-label">Division</div><div class="detail-value">${po.Division || 'N/A'}</div></div>
+                            <div class="po-detail"><div class="detail-label">Region</div><div class="detail-value">${po.Region || 'N/A'}</div></div>
+                            <div class="po-detail"><div class="detail-label">District</div><div class="detail-value">${po.District || 'N/A'}</div></div>
+                            <div class="po-detail"><div class="detail-label">State</div><div class="detail-value">${po.State || 'N/A'}</div></div>
+                            <div class="po-detail"><div class="detail-label">Circle</div><div class="detail-value">${po.Circle || 'N/A'}</div></div>
+                            <div class="po-detail"><div class="detail-label">Country</div><div class="detail-value">${po.Country || 'India'}</div></div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            resultArea.innerHTML = html;
+        }
+
+        function showError(msg) {
+            const resultArea = document.getElementById('resultArea');
+            resultArea.innerHTML = `<div class="error-msg">⚠️ ${msg}</div>`;
+        }
+
+        // Enter key
+        document.getElementById('pinInput').addEventListener('keydown', e => { if(e.key === 'Enter') searchPinCode(); });
+
+        // Auto-focus
+        document.getElementById('pinInput').focus();
+
+        // Check URL params for auto-search
+        const urlParams = new URLSearchParams(window.location.search);
+        const pinParam = urlParams.get('pin');
+        if (pinParam && isValidPin(pinParam)) {
+            document.getElementById('pinInput').value = pinParam;
+            searchPinCode();
+        }
+    </script>
+</body>
+</html>
